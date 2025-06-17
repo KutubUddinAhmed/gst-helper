@@ -20,6 +20,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { ArrowOutwardOutlined, Delete } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import the hook
 import vendorList from "./vendorList";
 
 function Vendor() {
@@ -29,6 +30,8 @@ function Vendor() {
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
   const rowsPerPage = 10;
+
+  const navigate = useNavigate(); // Initialize the hook
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -53,12 +56,8 @@ function Vendor() {
     setPage(0);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}/${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}/${date.getDate().toString().padStart(2, "0")}`;
-  };
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString("en-GB");
 
   const filteredVendors = vendorList
     .filter((vendor) => {
@@ -90,6 +89,10 @@ function Vendor() {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  const handleViewVendor = (userId: string | number) => {
+    navigate(`/vendor/${userId}`);
+  };
 
   return (
     <div className="bg-[#fff] h-full px-4 space-y-4">
@@ -224,7 +227,10 @@ function Vendor() {
                 </TableCell>
                 <TableCell sx={{ py: "3px" }}>
                   <Tooltip title="View">
-                    <IconButton color="primary">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleViewVendor(vendor.user_id)}
+                    >
                       <ArrowOutwardOutlined />
                     </IconButton>
                   </Tooltip>
