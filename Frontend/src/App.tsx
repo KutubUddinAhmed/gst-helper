@@ -4,6 +4,7 @@ import AccountantDashboard from "../src/components/accountantdashboard/Accountan
 import Layout from "./components/layout/Layout";
 import Vendor from "./components/Vendor/Vendors";
 import VendorProfile from "./components/Vendor/VendorProfile";
+import AuthPage from "./components/auth/AuthPage";
 
 
 const App: React.FC = () => {
@@ -11,6 +12,8 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/signup" element={<AuthPage />} />
           <Route index element={<AccountantDashboard />} />
           <Route path="/vendor" element={<Vendor />} />
           <Route path="/vendor/:user_id" element={<VendorProfile />} />
