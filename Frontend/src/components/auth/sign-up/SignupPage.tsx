@@ -1,105 +1,324 @@
+import { TextField, Button, MenuItem, Box, Divider } from "@mui/material";
+
 import { Link } from "react-router-dom";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Facebook, Google } from "@mui/icons-material";
+
+const base_url = import.meta.env.VITE_API_BASE_URL;
+const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
+
+
+interface SignupFormData {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  created_at: string;
+}
+
+
+
 
 function SignupPage() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    defaultValues: {
+      email: "",
+      password: "",
+      first_name: "",
+      last_name: "",
+      role: "vendor",
+      created_at: "",
+    },
+  });
+
+
+  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+
+    data.created_at = data.email
+
+    try {
+      const response = await fetch(`${base_url}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMessage = errorData?.detail
+        // Show error toast
+        toast.error(errorMessage, { position: "bottom-right" });
+        // reset();
+        throw new Error(errorMessage);
+      }
+
+      toast.success("Account created successfully!", {
+        position: "bottom-right",
+      });
+
+      reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
   return (
-    <div className="flex justify-center items-center w-full h-full  ">
-      <div className="w-full p-3 shadow-md  backdrop-blur-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      width="100"
+      height="70vh"
+    >
+      <Box
+        p={2}
+        borderRadius={4}
+        boxShadow={4}
+        bgcolor="rgba(255, 255, 255, 0.6)"
+        maxWidth={400}
+        width="100%"
+        sx={{
+          boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.6)",
+        }}
+      >
+        <h2 className="text-center mt-2 mb-5 text-3xl font-semibold">
           Create an Account
         </h2>
-        <form className="space-y-2">
-          <div className="flex w-full items-center justify-between gap-2">
-            {/* First Name */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          <TextField
+            fullWidth
+            label="First Name"
+            {...register("first_name", { required: "First name is required" })}
+            error={!!errors.first_name}
+            helperText={errors.first_name?.message}
+            variant="outlined"
+            InputProps={{
+              style: { borderRadius: "16px", backgroundColor: "white" },
+            }}
+            className="bg-white rounded-4xl"
+            InputLabelProps={{
+              style: {
+                lineHeight: "1.1em", // Optional: Adjust label line height
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: "48px",
+              },
+            }}
+          />
 
-            <div className="flex-1">
-              <input
-                type="text"
-                id="first_name"
-                className="px-3 w-full py-2 mt-1 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Enter your first name"
-              />
-            </div>
-
-            {/* Last Name */}
-            <div className="flex-1">
-              <input
-                type="text"
-                id="last_name"
-                className="w-full px-4 py-2 mt-1 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Enter your last name"
-              />
-            </div>
-          </div>
+          {/* Last Name */}
+          <TextField
+            fullWidth
+            label="Last Name"
+            {...register("last_name", { required: "Last name is required" })}
+            error={!!errors.last_name}
+            helperText={errors.last_name?.message}
+            variant="outlined"
+            InputProps={{ style: { borderRadius: "16px" } }}
+            className="bg-white rounded-4xl"
+            InputLabelProps={{
+              style: {
+                lineHeight: "1.1em", // Optional: Adjust label line height
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: "48px",
+              },
+            }}
+          />
 
           {/* Email */}
-          <div>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-4 py-2 mt-1 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Enter your email"
-            />
-          </div>
+          <TextField
+            fullWidth
+            label="Email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format",
+              },
+            })}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            type="email"
+            variant="outlined"
+            InputProps={{
+              style: { borderRadius: "16px", backgroundColor: "white" },
+            }}
+            InputLabelProps={{
+              style: {
+                lineHeight: "1.1em", // Optional: Adjust label line height
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: "48px",
+              },
+            }}
+          />
 
           {/* Password */}
-          <div>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-4 py-2 mt-1 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Enter your password"
-            />
-          </div>
+          <TextField
+            fullWidth
+            label="Password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
+            })}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            type="password"
+            variant="outlined"
+            InputProps={{
+              style: { borderRadius: "16px", backgroundColor: "white" },
+            }}
+            InputLabelProps={{
+              style: {
+                lineHeight: "1.1em", // Optional: Adjust label line height
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: "48px",
+              },
+            }}
+          />
 
           {/* Role */}
-          <div>
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-600"
-            >
-              Role
-            </label>
-            <select
-              id="role"
-              className="w-full px-4 py-2 mt-1 pl-4 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">Select your role</option>
-              <option value="admin">Vendor</option>
-              <option value="user">Super User</option>
-              {/* <option value="vendor">Vendor</option> */}
-            </select>
-          </div>
+          {/* <TextField
+            fullWidth
+            defaultValue={"superuser"}
+            label="Role"
+            {...register("role", { required: "Role is required" })}
+            error={!!errors.role}
+            helperText={errors.role?.message}
+            select
+            variant="outlined"
+            InputProps={{
+              style: { borderRadius: "16px", backgroundColor: "white" },
+            }}
+            InputLabelProps={{
+              style: {
+                lineHeight: "1.1em", // Optional: Adjust label line height
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                height: "48px",
+              },
+            }}
+          >
+            <MenuItem value="vendor">Vendor</MenuItem>
+          </TextField> */}
+          <input type="hidden" {...register("role")} />
 
-          {/* Created By */}
-          <div>
-            <input
-              type="text"
-              id="created_by"
-              className="w-full px-4 py-2 mt-1 border-gray-200 border bg-white/60 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Enter creator's name"
-            />
-          </div>
+          {/* Created at */}
+
+          {/* Hidden Created At Field */}
+          <input type="hidden" {...register("created_at")} />
 
           {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 mt-3 font-medium text-white  border-gray-200 border bg-black rounded-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
-            >
-              Sign Up
-            </button>
-          </div>
+          <Button
+            fullWidth
+            type="submit"
+            variant="contained"
+            sx={{
+              borderRadius: "16px",
+              height: "48px",
+              background: "linear-gradient(90deg, #6b46e5 0%, #b764e8 100%)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #5a3ab5 0%, #9751c2 100%)",
+              },
+              color: "white",
+            }}
+          >
+            Sign up
+          </Button>
         </form>
 
+        <Divider
+          style={{
+            margin: "16px 0",
+            color: "#6b7280",
+          }}
+        >
+          Or sign up with
+        </Divider>
+
+        <Box display="flex" justifyContent="center" gap={2}>
+          <Button
+            variant="outlined"
+            startIcon={<Google />}
+            sx={{
+              width: "48%",
+              borderRadius: "16px",
+              borderColor: "black",
+              height: "48px",
+              textTransform: "none",
+              fontSize: "0.9rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "black",
+            }}
+          >
+            Google
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Facebook />}
+            sx={{
+              width: "48%",
+              borderRadius: "16px",
+              borderColor: "black",
+              color: "black",
+              height: "48px",
+              textTransform: "none",
+              fontSize: "0.9rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Facebook
+          </Button>
+        </Box>
+
         {/* Switch to Login */}
-        <p className="mt-3 text-sm text-center text-black">
+        <p
+          style={{
+            marginTop: "1rem",
+            textAlign: "center",
+            fontSize: "0.9rem",
+            color: "#333",
+          }}
+        >
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 hover:underline">
+          <Link
+            to="/login"
+            style={{ color: "#4f46e5", textDecoration: "none" }}
+          >
             Login
           </Link>
         </p>
-      </div>
-    </div>
+      </Box>
+      <ToastContainer />
+    </Box>
   );
 }
 
