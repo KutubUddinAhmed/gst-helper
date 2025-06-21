@@ -91,7 +91,7 @@ function Vendor() {
   );
 
   const handleViewVendor = (userId: string | number) => {
-    navigate(`/vendor/${userId}`);
+    navigate(`/dashboard/vendor/${userId}`);
   };
 
   return (

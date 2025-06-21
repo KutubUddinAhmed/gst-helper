@@ -2,7 +2,7 @@ import Footer from './Footer'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../accountantdashboard/Sidebar';
 
-function Layout() {
+function DashboardLayout() {
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-grow overflow-hidden">
@@ -16,4 +16,4 @@ function Layout() {
   );
 }
 
-export default Layout
+export default DashboardLayout

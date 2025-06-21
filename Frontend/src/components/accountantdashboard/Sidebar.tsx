@@ -38,7 +38,7 @@ const SidePanel: React.FC = () => {
           </li>
           <li>
             <NavLink
-              to="/vendor"
+              to="vendor"
               className={({ isActive }) =>
                 `flex items-center space-x-3 p-3 rounded-lg ${
                   isActive ? "bg-white text-purple-600" : "hover:bg-purple-600"

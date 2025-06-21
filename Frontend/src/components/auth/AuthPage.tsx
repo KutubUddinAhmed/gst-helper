@@ -1,28 +1,46 @@
 import { useLocation } from "react-router-dom";
 import LoginPage from "./login-page/LoginPage";
 import SignupPage from "./sign-up/SignupPage";
+import logo from "../../assets/logo.avif";
 import bgImage from "../../assets/bgImage.jpg";
-
-
 function AuthPage() {
   const location = useLocation();
   const LOGIN = "/login";
   const SIGNUP = "/signup";
 
   return (
-    <div className="flex flex-col gap-0.5 items-center px-6 md:flex-row h-full">
-      {/* Left Section */}
+    // <div
+    //   className="h-[89.7vh] bg-cover bg-center flex items-center justify-center"
+    //   style={{
+    //     backgroundImage: `url(${mainBgImage})`,
+    //     backgroundSize: "cover", // Ensures the background covers the entire area
+    //     backgroundPosition: "center", // Centers the background
+    //   }}
+    // >
+    <div className="h-[89.7vh] bg-gradient-to-r from-purple-500 via-pink-200 to-blue-300 flex items-center justify-center">
+      {/* Semi-Transparent Overlay */}
+      {/* <div className="absolute inset-0 bg-white/10"></div> */}
+      {/* Container */}
       <div
-        className="hidden md:block flex-1 min-h-[500px] bg-cover bg-center backdrop-blur-3xl rounded-2xl"
+        className="childrenContainer rounded-lg max-w-7xl w-[95vw] flex flex-col md:flex-row overflow-hidden sm:h-[50vh] lg:h-[65vh]"
         style={{
-          backgroundImage: `url(${bgImage})`,
+          boxShadow: "0 0 10px 12px rgba(255, 255, 255, 0.3)",
         }}
-      ></div>
+      >
+        {/* Left Section */}
+        <div className="hidden md:block sm: md:w-1/2 flex-1 ">
+            <img
+              src={bgImage}
+              alt="Auth Illustration"
+              className="object-cover bg-center h-full w-full"
+            />
+        </div>
 
-      {/* Right Section */}
-      <div className="flex-1/5 flex justify-center items-center rounded-2xl min-h-[500px] bg-white/30 ">
-        {location.pathname === LOGIN && <LoginPage />}
-        {location.pathname === SIGNUP && <SignupPage />}
+        {/* Right Section */}
+        <div className="flex-1 flex-col justify-center  md:w-1/2 p-1 backdrop-blur-md">
+          {location.pathname === LOGIN && <LoginPage />}
+          {location.pathname === SIGNUP && <SignupPage />}
+        </div>
       </div>
     </div>
   );

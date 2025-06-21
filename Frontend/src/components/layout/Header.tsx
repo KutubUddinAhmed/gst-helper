@@ -1,7 +1,7 @@
 
 function Header() {
   return (
-    <div className="bg-gray-800 text-white p-4 w-full border-b-2 border-gray-700">
+    <div className=" text-white p-2 w-full z-100">
       <h1 className='text-red-500'>Header</h1>
     </div>
   )
