@@ -16,7 +16,7 @@ interface SignupFormData {
   first_name: string;
   last_name: string;
   role: string;
-  created_at: string;
+  created_by: string;
 }
 
 
@@ -35,14 +35,14 @@ function SignupPage() {
       first_name: "",
       last_name: "",
       role: "vendor",
-      created_at: "",
+      created_by: "",
     },
   });
 
 
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
 
-    data.created_at = data.email
+    data.created_by = data.email
 
     try {
       const response = await fetch(`${base_url}/signup`, {

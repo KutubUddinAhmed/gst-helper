@@ -6,22 +6,32 @@ import DefaultLayout from "./components/layout/DefaultLayout";
 import Vendor from "./components/Vendor/Vendors";
 import VendorProfile from "./components/Vendor/VendorProfile";
 import AuthPage from "./components/auth/AuthPage";
+import UnauthorizedPage from "./components/auth/UnauthorizedPage ";
+import ProtectedRoute from "./components/auth/ProtectedRoutes";
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<AccountantDashboard />} />
-          <Route path="vendor" element={<Vendor />} />
-          <Route path="vendor/:user_id" element={<VendorProfile />} />
-        </Route>
-
-        {/* Authentication and Default Layout */}
+        {/* Public Routes */}
         <Route path="/" element={<DefaultLayout />}>
           <Route path="login" element={<AuthPage />} />
           <Route path="signup" element={<AuthPage />} />
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        </Route>
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            
+            <ProtectedRoute allowedRoles={["accountant", "superuser"]}>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }>
+          <Route index element={<AccountantDashboard />} />
+          <Route path="vendor" element={<Vendor />} />
+          <Route path="vendor/:user_id" element={<VendorProfile />} />
         </Route>
       </Routes>
     </Router>

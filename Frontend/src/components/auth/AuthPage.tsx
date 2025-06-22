@@ -1,12 +1,11 @@
 import { useLocation } from "react-router-dom";
 import LoginPage from "./login-page/LoginPage";
 import SignupPage from "./sign-up/SignupPage";
-import logo from "../../assets/logo.avif";
 import mainBg from "../../assets/mainbackground.jpg";
 function AuthPage() {
   const location = useLocation();
   const LOGIN = "/login";
-  const SIGNUP = "/signup";
+  // const SIGNUP = "/signup";
 
   return (
     <div
@@ -45,7 +44,7 @@ function AuthPage() {
 
       <div className="flex-1 flex-col justify-center  md:w-1/2 p-1 ">
         {location.pathname === LOGIN && <LoginPage />}
-        {location.pathname === SIGNUP && <SignupPage />}
+        {/* {location.pathname === SIGNUP && <SignupPage />} */}
       </div>
     </div>
   );

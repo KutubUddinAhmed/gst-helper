@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
-
-const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+// const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
 const base_url = import.meta.env.VITE_API_BASE_URL;
 
 interface LoginFormData {
@@ -17,6 +17,7 @@ interface LoginFormData {
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -51,7 +52,24 @@ function LoginPage() {
         throw new Error(errorMessage);
       }
 
+      if (response.ok) {
+        const res = await response.json();
+        const data = { ...res, user_role: "accountant" };
+        sessionStorage.setItem("access_token", data?.access_token);
+        localStorage.setItem("user", JSON.stringify(data?.user));
+        localStorage.setItem("user_role", JSON.stringify(data?.user_role));
+        // Set refresh_token in cookies
+        Cookies.set("refresh_token", data.refresh_token, {
+          path: "/",
+          secure: true,
+          sameSite: "strict",
+          expires: 7, // 7 days
+        });
+      }
+
+
       toast.success("Login successful!", { position: "bottom-right" });
+      navigate("/dashboard");
       reset();
     } catch (error) {
       console.error("Error logging in:", error);
