@@ -24,7 +24,6 @@ const App: React.FC = () => {
         <Route
           path="/dashboard"
           element={
-            
             <ProtectedRoute allowedRoles={["accountant", "superuser"]}>
               <DashboardLayout />
             </ProtectedRoute>

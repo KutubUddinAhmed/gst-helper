@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../AppProvider";
 
@@ -11,19 +11,46 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles,
 }) => {
-  const { auth } = useAuth();
+  const { auth, verifyToken } = useAuth(); // Assume `verifyToken` checks the token validity
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Check if the user is authenticated
-  if (!auth.accessToken) {
-    return <Navigate to="/login" />;
+  console.log("auth USer 1 : ", auth.userRole);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Await verification of the token
+        const isValid = await verifyToken(auth.accessToken);
+        setIsAuthorized(
+          isValid &&
+            (!allowedRoles || allowedRoles.includes(auth.userRole || ""))
+        );
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        setIsAuthorized(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [auth.accessToken, auth.userRole, allowedRoles, verifyToken]);
+
+
+  console.log("auth USer 2 : ", auth.userRole)
+
+  // Show a loading indicator while waiting for the token verification
+  if (isLoading) {
+    return <div>Loading...</div>; // Replace with a spinner or appropriate loader
   }
 
-  // Check if the user has the required role
-  if (allowedRoles && !allowedRoles.includes(auth.userRole || "")) {
-    return <Navigate to="/unauthorized" />;
+  // Redirect if unauthorized
+  if (!isAuthorized) {
+    return <Navigate to={auth.accessToken ? "/unauthorized" : "/login"} />;
   }
 
-  // Render the protected component
+  // Render the protected component if authorized
   return <>{children}</>;
 };
 

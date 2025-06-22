@@ -83,8 +83,8 @@ function SignupPage() {
         p={2}
         borderRadius={4}
         boxShadow={4}
-        bgcolor="rgba(255, 255, 255, 0.6)"
-        maxWidth={400}
+        // bgcolor="rgba(255, 255, 255, 0.6)"
+        // maxWidth={400}
         width="100%"
         sx={{
           boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.6)",
@@ -199,38 +199,13 @@ function SignupPage() {
             }}
           />
 
-          {/* Role */}
-          {/* <TextField
-            fullWidth
-            defaultValue={"superuser"}
-            label="Role"
-            {...register("role", { required: "Role is required" })}
-            error={!!errors.role}
-            helperText={errors.role?.message}
-            select
-            variant="outlined"
-            InputProps={{
-              style: { borderRadius: "16px", backgroundColor: "white" },
-            }}
-            InputLabelProps={{
-              style: {
-                lineHeight: "1.1em", // Optional: Adjust label line height
-              },
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                height: "48px",
-              },
-            }}
-          >
-            <MenuItem value="vendor">Vendor</MenuItem>
-          </TextField> */}
+        
           <input type="hidden" {...register("role")} />
 
           {/* Created at */}
 
           {/* Hidden Created At Field */}
-          <input type="hidden" {...register("created_at")} />
+          <input type="hidden" {...register("created_by")} />
 
           {/* Submit Button */}
           <Button

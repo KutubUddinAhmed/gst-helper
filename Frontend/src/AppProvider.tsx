@@ -1,33 +1,30 @@
 import React, { type ReactNode } from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-import Cookies from "js-cookie";
 
 
-interface AuthContextType {
-  auth: {
-    accessToken: string;
-    user: string | "";
-    userRole: string | "";
-  };
-  setAuth: React.Dispatch<
-    React.SetStateAction<{
-      accessToken: string;
-      user: string | "";
-      userRole: string | "";
-    }>
-  >;
-  login: (data: any) => void;
-  logout: () => void;
+interface AuthState {
+  accessToken: string;
+  user: any | null;
+  userRole: string | "";
 }
 
+interface AuthContextType {
+  auth: AuthState;
+  setAuth: React.Dispatch<React.SetStateAction<AuthState>>;
+  login: (data: {
+    access_token: string;
+    user: any;
+    user_role: string;
+  }) => void;
+  verifyToken: (token: string) => Promise<boolean>;
+}
 
+const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthContext = createContext <AuthContextType | "">("");
-
-
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-
-  const [auth, setAuth] = useState({
+export const AppProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const initializeAuthState = (): AuthState => ({
     accessToken: sessionStorage.getItem("access_token") || "",
     user: localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user")!)
@@ -36,9 +33,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ? JSON.parse(localStorage.getItem("user_role")!)
       : "",
   });
-  
 
-
+  const [auth, setAuth] = useState<AuthState>(initializeAuthState);
 
   useEffect(() => {
     // Sync state with sessionStorage/localStorage on change
@@ -55,39 +51,48 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     if (auth.userRole) {
-      localStorage.setItem('user_role', JSON.stringify(auth.userRole));
+      localStorage.setItem("user_role", JSON.stringify(auth.userRole));
     } else {
-      localStorage.removeItem('user_role');
+      localStorage.removeItem("user_role");
     }
- 
-  }, [auth])
+  }, [auth]);
 
-
-
-  const login = (data : any) => {
+  const login = (data: {
+    access_token: string;
+    user: {};
+    user_role: string;
+  }) => {
     setAuth({
       accessToken: data.access_token,
       user: data.user,
       userRole: data.user_role,
     });
-  }
-
-  const logout = () => {
-    setAuth({ accessToken: "", user: "", userRole: "" });
-    sessionStorage.clear();
-    localStorage.clear();
-    Cookies.remove('refresh_token');
   };
 
 
+  const verifyToken = async (token: string): Promise<boolean> => {
+    if (!token) return false;
 
+    try {
+      // Example: Validate token with an API endpoint
+      const response = await fetch("/api/verify-token", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Token verification failed:", error);
+    }
+    return false;
+  };
 
-return (
-  <AuthContext.Provider value={{ auth, setAuth, login, logout }}>
-    {children}
-  </AuthContext.Provider>
-);
-
+  return (
+    <AuthContext.Provider value={{ auth, setAuth, login, verifyToken }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 // useAuth Hook

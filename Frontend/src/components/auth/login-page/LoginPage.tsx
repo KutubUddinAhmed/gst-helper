@@ -1,4 +1,11 @@
-import { TextField, Button, Box, Divider, IconButton } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Divider,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Google, Facebook } from "@mui/icons-material";
 import { useState } from "react";
@@ -7,7 +14,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-// const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
+const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
 const base_url = import.meta.env.VITE_API_BASE_URL;
 
 interface LoginFormData {
@@ -17,6 +24,7 @@ interface LoginFormData {
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -35,8 +43,9 @@ function LoginPage() {
   };
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${base_url}/login`, {
+      const response = await fetch(`${local_base_url}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +63,8 @@ function LoginPage() {
 
       const res = await response.json();
 
-      const userData = { ...res, user_role: "accountant" };
+      const userData = { ...res, user_role: "vendor" };
+      // const userData = { ...res, user_role: "accountant" };
       sessionStorage.setItem("access_token", userData.access_token);
       localStorage.setItem("user", JSON.stringify(userData.user));
       localStorage.setItem("user_role", JSON.stringify(userData.user_role));
@@ -76,6 +86,8 @@ function LoginPage() {
       reset();
     } catch (error) {
       console.error("Error logging in:", error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -142,6 +154,7 @@ function LoginPage() {
             fullWidth
             type="submit"
             variant="contained"
+            disabled={isLoading}
             sx={{
               borderRadius: "16px",
               height: "48px",
@@ -152,7 +165,11 @@ function LoginPage() {
               color: "white",
             }}
           >
-            Sign in
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
 
