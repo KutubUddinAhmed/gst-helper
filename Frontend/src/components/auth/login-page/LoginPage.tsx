@@ -52,24 +52,27 @@ function LoginPage() {
         throw new Error(errorMessage);
       }
 
-      if (response.ok) {
-        const res = await response.json();
-        const data = { ...res, user_role: "accountant" };
-        sessionStorage.setItem("access_token", data?.access_token);
-        localStorage.setItem("user", JSON.stringify(data?.user));
-        localStorage.setItem("user_role", JSON.stringify(data?.user_role));
-        // Set refresh_token in cookies
-        Cookies.set("refresh_token", data.refresh_token, {
-          path: "/",
-          secure: true,
-          sameSite: "strict",
-          expires: 7, // 7 days
-        });
-      }
+      const res = await response.json();
 
+      const userData = { ...res, user_role: "accountant" };
+      sessionStorage.setItem("access_token", userData.access_token);
+      localStorage.setItem("user", JSON.stringify(userData.user));
+      localStorage.setItem("user_role", JSON.stringify(userData.user_role));
+
+      Cookies.set("refresh_token", userData.refresh_token, {
+        path: "/",
+        secure: true,
+        sameSite: "strict",
+        expires: 7, // 7 days
+      });
 
       toast.success("Login successful!", { position: "bottom-right" });
-      navigate("/dashboard");
+
+      // Ensure Toast is shown before redirect (slight delay optional)
+      setTimeout(() => {
+        navigate("/dashboard/");
+      }, 500);
+
       reset();
     } catch (error) {
       console.error("Error logging in:", error);
