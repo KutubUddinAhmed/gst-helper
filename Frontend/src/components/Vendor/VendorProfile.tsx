@@ -99,31 +99,7 @@ function VendorProfile() {
 
   return (
     <main>
-      {/* Breadcrumb */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{
-          "& .MuiBreadcrumbs-separator": { color: "#7452f5" },
-        }}
-      >
-        <Link underline="hover" fontSize={"14px"} color="#9333EA" href="/">
-          Home
-        </Link>
-        <Link underline="hover" fontSize={"14px"} color="#9333EA" href="/">
-          Dashboard
-        </Link>
-        <Link
-          underline="hover"
-          fontSize={"14px"}
-          color="#9333EA"
-          href="/vendor"
-        >
-          Vendor
-        </Link>
-        <Typography fontSize={"14px"} className="text-purple-800 font-bold">
-          {profile?.name || "Vendor Profile"}
-        </Typography>
-      </Breadcrumbs>
+
 
       <div className="flex items-center bg-[#fff] h-full  px-4 space-x-6">
         {/* Left Section */}

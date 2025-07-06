@@ -1,76 +1,195 @@
 export interface Vendor {
-    id: number;
-    user_id: string;
-    name: string;
-    address: string;
-    phone: string;
-    business: string;
-    created_at: string; // ISO format or Date type if you're using real dates
-    updated_at: string; // ISO format or Date type if you're using real dates
-  }
-  
-  const vendorList: Vendor[] = [
-    {
-      id: 1,
-      user_id: "USR001",
-      name: "John Doe",
-      address: "123 Main St, Springfield",
-      phone: "+1-234-567-890",
-      business: "Doe Industries",
-      created_at: "2023-01-01T10:00:00Z",
-      updated_at: "2023-01-02T12:00:00Z",
-    },
-    {
-      id: 2,
-      user_id: "USR002",
-      name: "Jane Smith",
-      address: "456 Elm St, Shelbyville",
-      phone: "+1-345-678-901",
-      business: "Smith LLC",
-      created_at: "2023-01-03T09:00:00Z",
-      updated_at: "2023-01-04T11:30:00Z",
-    },
-    {
-      id: 3,
-      user_id: "USR003",
-      name: "Alice Johnson",
-      address: "789 Oak St, Capital City",
-      phone: "+1-456-789-012",
-      business: "Johnson Supplies",
-      created_at: "2023-01-05T08:00:00Z",
-      updated_at: "2023-01-06T14:00:00Z",
-    },
-    {
-      id: 4,
-      user_id: "USR001",
-      name: "Clark Kevin",
-      address: "123 Main St, Springfield",
-      phone: "+1-234-567-890",
-      business: "Doe Industries",
-      created_at: "2023-01-01T10:00:00Z",
-      updated_at: "2023-01-02T12:00:00Z",
-    },
-    {
-      id: 5,
-      user_id: "USR002",
-      name: "Jason Anderson",
-      address: "456 Elm St, Shelbyville",
-      phone: "+1-345-678-901",
-      business: "Smith LLC",
-      created_at: "2023-01-03T09:00:00Z",
-      updated_at: "2023-01-04T11:30:00Z",
-    },
-    {
-      id: 6,
-      user_id: "USR003",
-      name: "Fredrick Rodger",
-      address: "789 Oak St, Capital City",
-      phone: "+1-456-789-012",
-      business: "Johnson Supplies",
-      created_at: "2023-01-05T08:00:00Z",
-      updated_at: "2023-01-06T14:00:00Z",
-    },
-    // Add other vendors similarly...
-  ];
-  
-  export default vendorList;
+  id: number;
+  user_id: string;
+  name: string;
+  address: string;
+  phone: string;
+  business: string;
+  created_at: string; // ISO format
+  updated_at: string;
+}
+
+const vendorList: Vendor[] = [
+  {
+    id: 1,
+    user_id: "USR001",
+    name: "John Doe",
+    address: "123 Main St, Springfield",
+    phone: "+91 8637-373-771",
+    business: "Doe Industries",
+    created_at: "2023-01-01T10:00:00Z",
+    updated_at: "2023-01-02T12:00:00Z",
+  },
+  {
+    id: 2,
+    user_id: "USR002",
+    name: "Jane Smith",
+    address: "456 Elm St, Shelbyville",
+    phone: "+1-345-678-901",
+    business: "Smith LLC",
+    created_at: "2023-01-03T09:00:00Z",
+    updated_at: "2023-01-04T11:30:00Z",
+  },
+  {
+    id: 3,
+    user_id: "USR003",
+    name: "Alice Johnson",
+    address: "789 Oak St, Capital City",
+    phone: "+1-456-789-012",
+    business: "Johnson Supplies",
+    created_at: "2023-01-05T08:00:00Z",
+    updated_at: "2023-01-06T14:00:00Z",
+  },
+  {
+    id: 4,
+    user_id: "USR001",
+    name: "Clark Kevin",
+    address: "123 Main St, Springfield",
+    phone: "+1-234-567-890",
+    business: "Doe Industries",
+    created_at: "2023-01-01T10:00:00Z",
+    updated_at: "2023-01-02T12:00:00Z",
+  },
+  {
+    id: 5,
+    user_id: "USR002",
+    name: "Jason Anderson",
+    address: "456 Elm St, Shelbyville",
+    phone: "+1-345-678-901",
+    business: "Smith LLC",
+    created_at: "2023-01-03T09:00:00Z",
+    updated_at: "2023-01-04T11:30:00Z",
+  },
+  {
+    id: 6,
+    user_id: "USR003",
+    name: "Fredrick Rodger",
+    address: "789 Oak St, Capital City",
+    phone: "+1-456-789-012",
+    business: "Johnson Supplies",
+    created_at: "2023-01-05T08:00:00Z",
+    updated_at: "2023-01-06T14:00:00Z",
+  },
+  {
+    id: 7,
+    user_id: "USR004",
+    name: "Michael Green",
+    address: "101 Pine St, Metropolis",
+    phone: "+1-567-890-123",
+    business: "Green Corp",
+    created_at: "2023-02-01T10:00:00Z",
+    updated_at: "2023-02-02T12:00:00Z",
+  },
+  {
+    id: 8,
+    user_id: "USR005",
+    name: "Natalie Brown",
+    address: "202 Cedar Ave, Smallville",
+    phone: "+1-678-901-234",
+    business: "Brown Enterprises",
+    created_at: "2023-02-03T11:00:00Z",
+    updated_at: "2023-02-04T13:00:00Z",
+  },
+  {
+    id: 9,
+    user_id: "USR006",
+    name: "Samuel Lewis",
+    address: "303 Maple Blvd, Gotham",
+    phone: "+1-789-012-345",
+    business: "Lewis & Co.",
+    created_at: "2023-02-05T12:00:00Z",
+    updated_at: "2023-02-06T14:00:00Z",
+  },
+  {
+    id: 10,
+    user_id: "USR007",
+    name: "Olivia Harris",
+    address: "404 Birch Lane, Star City",
+    phone: "+1-890-123-456",
+    business: "Harris Textiles",
+    created_at: "2023-02-07T13:00:00Z",
+    updated_at: "2023-02-08T15:00:00Z",
+  },
+  {
+    id: 11,
+    user_id: "USR008",
+    name: "Ryan Cooper",
+    address: "505 Redwood Rd, Central City",
+    phone: "+1-901-234-567",
+    business: "Cooper Tools",
+    created_at: "2023-02-09T14:00:00Z",
+    updated_at: "2023-02-10T16:00:00Z",
+  },
+  {
+    id: 12,
+    user_id: "USR009",
+    name: "Emma Wilson",
+    address: "606 Cypress Dr, Coast City",
+    phone: "+1-012-345-678",
+    business: "Wilson Designs",
+    created_at: "2023-02-11T15:00:00Z",
+    updated_at: "2023-02-12T17:00:00Z",
+  },
+  {
+    id: 13,
+    user_id: "USR010",
+    name: "Daniel Wright",
+    address: "707 Cherry St, Riverdale",
+    phone: "+1-123-456-789",
+    business: "Wright Construction",
+    created_at: "2023-02-13T16:00:00Z",
+    updated_at: "2023-02-14T18:00:00Z",
+  },
+  {
+    id: 14,
+    user_id: "USR011",
+    name: "Sophia Lee",
+    address: "808 Aspen Way, Hill Valley",
+    phone: "+1-234-567-890",
+    business: "Lee Ventures",
+    created_at: "2023-02-15T17:00:00Z",
+    updated_at: "2023-02-16T19:00:00Z",
+  },
+  {
+    id: 15,
+    user_id: "USR012",
+    name: "Liam King",
+    address: "909 Walnut Cir, Emerald City",
+    phone: "+1-345-678-901",
+    business: "King Electronics",
+    created_at: "2023-02-17T18:00:00Z",
+    updated_at: "2023-02-18T20:00:00Z",
+  },
+  {
+    id: 16,
+    user_id: "USR013",
+    name: "Ava Martinez",
+    address: "1010 Poplar Pl, Twin Peaks",
+    phone: "+1-456-789-012",
+    business: "Martinez Logistics",
+    created_at: "2023-02-19T19:00:00Z",
+    updated_at: "2023-02-20T21:00:00Z",
+  },
+  {
+    id: 17,
+    user_id: "USR014",
+    name: "Ethan Clark",
+    address: "1111 Spruce St, Wakanda",
+    phone: "+1-567-890-123",
+    business: "Clark Technologies",
+    created_at: "2023-02-21T20:00:00Z",
+    updated_at: "2023-02-22T22:00:00Z",
+  },
+  {
+    id: 18,
+    user_id: "USR015",
+    name: "Isabella Turner",
+    address: "1212 Palm St, Genovia",
+    phone: "+1-678-901-234",
+    business: "Turner Fashion",
+    created_at: "2023-02-23T21:00:00Z",
+    updated_at: "2023-02-24T23:00:00Z",
+  },
+];
+
+export default vendorList;

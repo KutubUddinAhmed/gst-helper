@@ -4,15 +4,19 @@ import {
   Box,
   TextField,
   Button,
-  Divider,
   Typography,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
-import { Facebook, Google, Close as CloseIcon } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {useAuth} from "../../AppProvider"
+import { useAuth } from "../../AppProvider";
 
 const base_url = import.meta.env.VITE_API_BASE_URL;
 const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
@@ -32,13 +36,11 @@ interface SignupModalProps {
 }
 
 const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
+  const { auth } = useAuth();
+  const accountantEmail = auth?.user.email;
 
-
-  const { auth } = useAuth()
-  
-  const accountantEmail =  auth?.user.email
-
-
+  const [isPasswordVisible, setPasswordVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false)
   const {
     register,
     handleSubmit,
@@ -55,7 +57,12 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
     },
   });
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prev) => !prev);
+  };
+
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+    setIsLoading(true)
     data.created_by = accountantEmail;
 
     try {
@@ -82,6 +89,8 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
       onClose();
     } catch (error) {
       console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -147,7 +156,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
           <TextField
             fullWidth
             label="Password"
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             {...register("password", {
               required: "Password is required",
               minLength: {
@@ -157,21 +166,35 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
             })}
             error={!!errors.password}
             helperText={errors.password?.message}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button
             fullWidth
             type="submit"
             variant="contained"
+            disabled={isLoading}
             sx={{
               borderRadius: 2,
               height: "48px",
-              background: "linear-gradient(90deg, #6b46e5 0%, #b764e8 100%)",
+              background: isLoading
+                ? "linear-gradient(90deg, #c3c3c3 0%, #d6d6d6 100%)"
+                : "linear-gradient(90deg, #6b46e5 0%, #b764e8 100%)",
               "&:hover": {
-                background: "linear-gradient(90deg, #5a3ab5 0%, #9751c2 100%)",
+                background: isLoading
+                  ? "linear-gradient(90deg, #c3c3c3 0%, #d6d6d6 100%)"
+                  : "linear-gradient(90deg, #5a3ab5 0%, #9751c2 100%)",
               },
             }}
           >
-            Add Vendor
+            {isLoading ? "Siging in..." : "Add Vendor"}
           </Button>
         </form>
 

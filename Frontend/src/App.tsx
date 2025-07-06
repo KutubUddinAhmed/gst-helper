@@ -6,7 +6,7 @@ import DefaultLayout from "./components/layout/DefaultLayout";
 import Vendor from "./components/Vendor/Vendors";
 import VendorProfile from "./components/Vendor/VendorProfile";
 import AuthPage from "./components/auth/AuthPage";
-import UnauthorizedPage from "./components/auth/UnauthorizedPage ";
+import UnauthorizedPage from "./components/auth/UnauthorizedPage"
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
 
 const App: React.FC = () => {

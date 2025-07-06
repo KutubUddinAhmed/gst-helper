@@ -2,26 +2,35 @@ import React from "react";
 import { Search } from "@mui/icons-material";
 import { AccountCircle } from "@mui/icons-material";
 
+import Breadcrumbs from "./Breadcrumbs";
+import { SidebarTrigger } from "../../../components/components/ui/sidebar";
+
 function DashboardHeader() {
   return (
-    <div className="bg-black text-white flex items-center justify-between px-4 py-3">
+    <div className="text-black bg-black flex items-center justify-between py-2 md:px-6  md:py-3 min-w-full 2xl:max-w-[90vw]">
       {/* Left Section */}
-      <div className="text-lg font-bold">Welcome, User!</div>
+      <div className="flex gap-1.5 md:space-x-3 md:text-sm md:font-semibold">
+        <SidebarTrigger className="text-white"  />
+        <Breadcrumbs />
+      </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {/* Search Bar */}
         <div className="relative">
           <input
             type="text"
             placeholder="Search..."
-            className="bg-gray-800 text-white rounded-full pl-10 pr-4 py-2 focus:outline-none"
+            className="bg-white md:py-2 rounded-sm md:rounded-md px-2 sm:px-4 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-black w-[150px] md:w-[300px] placeholder:text-xs md:placeholder:text-lg"
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Search
+            className="absolute right-0 sm:right-2 top-1/2 transform -translate-y-1/2 text-black p-1 sm:p-0 "
+          />
         </div>
 
+
         {/* Profile Icon */}
-        <AccountCircle className="text-3xl cursor-pointer hover:text-gray-400" />
+        <AccountCircle className="cursor-pointer text-white hover:text-gray-900/70 transition duration-200 md:min-h-[45px] md:min-w-[45px] rounded-full" />
       </div>
     </div>
   );

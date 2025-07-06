@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Add } from "@mui/icons-material";
-import { Box,Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import SignupModal from "./SignupModal";
-import { useAuth } from "../../AppProvider";
+// import { useAuth } from "../../AppProvider";
 
 const AccountantDashboard = () => {
-
-   const { auth } = useAuth()
-    
- 
-
-
+  // const { auth } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -18,8 +13,9 @@ const AccountantDashboard = () => {
   const handleCloseModal = () => setIsModalOpen(false);
 
   return (
-    <div className="bg-[#fff] p-4">
-      <div className="grid grid-cols-4 gap-4">
+    <div className="bg-[#fff] p-4 h-full w-[90vw] md:w-[80vw] mx-auto">
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mx-auto">
         {/* Box 1: Add Vendor */}
         <Box
           onClick={handleOpenModal}
@@ -30,8 +26,9 @@ const AccountantDashboard = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            maxWidth: "200px",
             cursor: "pointer",
+            maxHeight: "100px",
+            maxWidth: "200px",
             "&:hover": {
               backgroundColor: "#f3e5f5",
             },
@@ -51,7 +48,9 @@ const AccountantDashboard = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            maxHeight: "100px",
             maxWidth: "200px",
+            cursor: "pointer",
             "&:hover": {
               backgroundColor: "#e8f5e9",
             },
@@ -70,7 +69,9 @@ const AccountantDashboard = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            minHeight: "100px",
             maxWidth: "200px",
+            cursor: "pointer",
             "&:hover": {
               backgroundColor: "#e3f2fd",
             },
@@ -89,6 +90,8 @@ const AccountantDashboard = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            cursor: "pointer",
+            minHeight: "100px",
             maxWidth: "200px",
             "&:hover": {
               backgroundColor: "#fbe9e7",

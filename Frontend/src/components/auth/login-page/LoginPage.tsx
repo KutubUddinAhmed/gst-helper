@@ -45,7 +45,7 @@ function LoginPage() {
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${local_base_url}/login`, {
+      const response = await fetch(`${base_url}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,8 +63,8 @@ function LoginPage() {
 
       const res = await response.json();
 
-      const userData = { ...res, user_role: "vendor" };
-      // const userData = { ...res, user_role: "accountant" };
+      // const userData = { ...res, user_role: "vendor" };
+      const userData = { ...res, user_role: "accountant" };
       sessionStorage.setItem("access_token", userData.access_token);
       localStorage.setItem("user", JSON.stringify(userData.user));
       localStorage.setItem("user_role", JSON.stringify(userData.user_role));

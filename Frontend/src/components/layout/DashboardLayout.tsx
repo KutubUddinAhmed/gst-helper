@@ -1,22 +1,30 @@
-import Footer from './Footer'
-import { Outlet } from 'react-router-dom'
-import Sidebar from '../accountantdashboard/Sidebar';
-import DashboardHeader from './DashboardHeader';
+import Footer from "./Footer";
+import { Outlet } from "react-router-dom";
+import DashboardHeader from "./DashboardHeader";
+import { SidebarProvider } from "../../../components/components/ui/sidebar"
+import { AppSidebar } from "../accountantdashboard/appSidebar"
 
 function DashboardLayout() {
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex flex-grow overflow-hidden">
-        <Sidebar />
+    <SidebarProvider defaultOpen={false}>
+      <div className="flex flex-col h-screen w-full">
+        {/* Sidebar and Main Content */}
+        <div className="flex flex-grow overflow-hidden">
+          {/* Sidebar */}
+          <AppSidebar />
 
-        <main className="flex-grow overflow-hidden">
-          <DashboardHeader />
-          <Outlet /> {/* Renders the child routes */}
-        </main>
+          {/* Main Content */}
+          <main className="flex-grow flex flex-col">
+              <DashboardHeader />
+              <Outlet />
+          </main>
+        </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </SidebarProvider>
   );
 }
 
-export default DashboardLayout
+export default DashboardLayout;
