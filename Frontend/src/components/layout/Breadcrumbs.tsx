@@ -20,8 +20,11 @@ const Breadcrumbs: React.FC = () => {
 
     return (
       <span key={path} className="flex items-center">
-        {index > 0 && <span className="mx-2">/</span>} {/* Separator */}
-        <Link to={path} className="text-purple-700 text-[9px] sm:text-lg hover:underline">
+        {index > 0 && <span className="mx-2 sm:text-3xl">/</span>} {/* Separator */}
+        <Link
+          to={path}
+          className="text-[#1f2937] text-[9px] sm:text-3xl hover:underline"
+        >
           {label}
         </Link>
       </span>

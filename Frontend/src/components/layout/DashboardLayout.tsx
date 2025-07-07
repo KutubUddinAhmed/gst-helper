@@ -12,9 +12,8 @@ function DashboardLayout() {
         <div className="flex flex-grow overflow-hidden">
           {/* Sidebar */}
           <AppSidebar />
-
           {/* Main Content */}
-          <main className="flex-grow flex flex-col">
+          <main className="flex flex-col w-full">
               <DashboardHeader />
               <Outlet />
           </main>

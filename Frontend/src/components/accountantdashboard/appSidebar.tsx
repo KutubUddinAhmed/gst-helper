@@ -58,13 +58,15 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar
-      collapsible="offcanvas"
-    >
-      <SidebarContent className="bg-[rgb(162,160,255)] ">
+    <Sidebar collapsible="offcanvas">
+      <SidebarContent
+        style={{
+          background: "linear-gradient(to bottom, #080a2d, #121f54, #1e3d8d)",
+        }}
+      >
         <SidebarGroup>
           <SidebarGroupLabel
-            className={`mb-6 text-center mx-auto font-semibold transition-opacity`}
+            className={`mb-6 text-white text-center mx-auto font-semibold transition-opacity`}
           >
             GST HELPER
           </SidebarGroupLabel>

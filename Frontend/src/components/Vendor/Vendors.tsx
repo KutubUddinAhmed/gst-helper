@@ -150,7 +150,7 @@ function Vendor() {
       <div className="overflow-x-auto rounded-lg shadow-md border mx-1">
         <TableContainer
           component={Paper}
-          className=""
+          className="border border-black"
           sx={{
             borderRadius: "10px",
           }}
@@ -161,7 +161,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="max-w-9 sm:w-16 md:w-20 "
@@ -171,7 +171,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="w-32 sm:min-w-36 md:w-48 "
@@ -181,7 +181,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="min-w-44 sm:min-w-50 md:w-64 "
@@ -191,7 +191,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="min-w-40 sm:w-36 md:w-44 "
@@ -201,7 +201,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="w-36 sm:w-44 md:w-52 "
@@ -211,7 +211,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="w-24 sm:w-32 md:w-40 "
@@ -221,7 +221,7 @@ function Vendor() {
                 <TableCell
                   sx={{
                     fontWeight: "bold",
-                    color: "#7452f5",
+                    color: "#0A345E",
                     whiteSpace: "nowrap",
                   }}
                   className="min-w-28 sm:w-28 md:w-32  "
@@ -236,7 +236,7 @@ function Vendor() {
                 <TableRow
                   key={vendor.id}
                   sx={{
-                    backgroundColor: index % 2 === 0 ? "#EDE7F6" : "#FFFFFF",
+                    backgroundColor: index % 2 === 0 ? "#BDE0FE" : "#F1FFFF",
                   }}
                 >
                   <TableCell sx={{ py: 1 }}>
@@ -259,7 +259,7 @@ function Vendor() {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton sx={{ color: "#DB1616" }}>
+                      <IconButton sx={{ color: "#f07167" }}>
                         <Delete />
                       </IconButton>
                     </Tooltip>
@@ -281,9 +281,10 @@ function Vendor() {
           onPageChange={handleChangePage}
           rowsPerPageOptions={[]}
           sx={{
-            backgroundColor: "rgb(162,160,255)",
+            backgroundColor: "#15254D",
             borderRadius: "10px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            color: "white",
             mt: 2,
           }}
         />
