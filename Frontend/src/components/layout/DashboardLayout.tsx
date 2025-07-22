@@ -9,7 +9,7 @@ function DashboardLayout() {
     <SidebarProvider defaultOpen={false}>
       <div className="flex flex-col h-screen w-full">
         {/* Sidebar and Main Content */}
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex flex-grow gap-0 overflow-hidden">
           {/* Sidebar */}
           <AppSidebar />
           {/* Main Content */}
@@ -20,7 +20,7 @@ function DashboardLayout() {
         </div>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </SidebarProvider>
   );

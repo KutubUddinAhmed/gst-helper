@@ -1,6 +1,7 @@
+import Cookies from "js-cookie";
 import React, { type ReactNode } from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-
+const base_url = import.meta.env.VITE_API_BASE_URL;
 
 interface AuthState {
   accessToken: string;
@@ -8,14 +9,17 @@ interface AuthState {
   userRole: string | "";
 }
 
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+
 interface AuthContextType {
   auth: AuthState;
   setAuth: React.Dispatch<React.SetStateAction<AuthState>>;
-  login: (data: {
-    access_token: string;
-    user: any;
-    user_role: string;
-  }) => void;
+  login: (data: LoginData) => Promise<boolean>;
   verifyToken: (token: string) => Promise<boolean>;
 }
 
@@ -57,17 +61,45 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [auth]);
 
-  const login = (data: {
-    access_token: string;
-    user: {};
-    user_role: string;
-  }) => {
-    setAuth({
-      accessToken: data.access_token,
-      user: data.user,
-      userRole: data.user_role,
-    });
+
+
+  const login = async ({ email, password }: LoginData): Promise<boolean> => {
+    try {
+      const response = await fetch(`${base_url}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) return false;
+
+      const data = await response.json();
+      const userRole = "accountant"; // or derive from data
+
+      setAuth({
+        accessToken: data.access_token,
+        user: data.user,
+        userRole,
+      });
+
+      sessionStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("user_role", userRole);
+
+      Cookies.set("refresh_token", data.refresh_token, {
+        path: "/",
+        secure: true,
+        sameSite: "strict",
+        expires: 7,
+      });
+
+      return true;
+    } catch (err) {
+      console.error("Login error:", err);
+      return false;
+    }
   };
+  
 
 
   const verifyToken = async (token: string): Promise<boolean> => {

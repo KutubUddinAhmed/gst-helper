@@ -7,12 +7,10 @@ function DefaultLayout() {
     <div className="flex flex-col min-h-screen">
       {/* Header Section */}
      <Header />
-
       {/* Main Content Section */}
-      <main className="flex-grow container mx-auto ">
+      <main className="flex-grow h-full ">
         <Outlet />
       </main>
-
       {/* Footer Section */}
      <Footer />
     </div>

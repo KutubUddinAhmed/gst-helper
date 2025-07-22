@@ -99,34 +99,38 @@ function VendorProfile() {
 
   return (
     <main>
-
-
-      <div className="flex items-center bg-[#fff] h-full  px-4 space-x-6">
+      <div className="flex flex-col  bg-[#fff] h-full w-full  px-3 pt-2">
         {/* Left Section */}
         <div
-          className="h-[500px] min-w-[350px] border border-gray-300 p-4 rounded-lg"
+          className="h-[300px] min-w-[350px] border-2 border-white bg-[#121f54e0] p-4 rounded-lg"
           style={{
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Typography variant="h6" color="primary" gutterBottom>
+          <Typography
+            variant="h6"
+            className="text-black font-bold inline-block py-1 px-1.5 bg-white  rounded-xl "
+            gutterBottom
+          >
             Vendor Details
           </Typography>
-          <Typography>
-            <strong>Name:</strong> {profile?.name || "N/A"}
-          </Typography>
-          <Typography>
-            <strong>Email:</strong> {profile?.email || "N/A"}
-          </Typography>
-          <Typography>
-            <strong>Phone:</strong> {profile?.phone || "N/A"}
-          </Typography>
+          <div className="flex gap-2 border-2 border-white mt-2 max-w-1/2 items-center justify-between ">
+            <Typography>
+              <strong>Name:</strong> {profile?.name || "N/A"}
+            </Typography>
+            <Typography>
+              <strong>Email:</strong> {profile?.email || "N/A"}
+            </Typography>
+            <Typography>
+              <strong>Phone:</strong> {profile?.phone || "N/A"}
+            </Typography>
+          </div>
           {/* Add more details as needed */}
         </div>
-        {/* Right Section */}
-        <div className="flex-grow flex flex-col h-full w-[820px]">
+        {/* Bottom Section */}
+        <div className="flex-grow flex flex-col h-full lg:w-full">
           {/* Search and Filters */}
-          <div className="flex items-center mt-10 gap-5 space-x-4">
+          <div className="flex items-center mt-3 gap-5 space-x-4">
             <TextField
               variant="outlined"
               label="Search Files"

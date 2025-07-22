@@ -7,7 +7,7 @@ import { SidebarTrigger } from "../../../components/components/ui/sidebar";
 
 function DashboardHeader() {
   return (
-    <div className="flex items-center justify-between py-2 md:py-3 min-w-full 2xl:max-w-[90vw]">
+    <div className="flex items-center justify-between py-2 md:py-3 min-w-full 2xl:max-w-[90vw] border-b-2 border-gray-300 sticky bg-gray-100 ">
       {/* Left Section */}
       <div className="flex items-center gap-1.5  md:text-sm md:font-semibold">
         <SidebarTrigger  />
@@ -27,7 +27,7 @@ function DashboardHeader() {
         </div>
 
         {/* Profile Icon */}
-        <AccountCircle className="cursor-pointer text-white hover:text-gray-900/70 transition duration-200 md:min-h-[45px] md:min-w-[45px] rounded-full" />
+        <AccountCircle className="cursor-pointer text-black hover:text-gray-900/70 transition duration-200 md:min-h-[45px] md:min-w-[45px] rounded-full" />
       </div>
     </div>
   );

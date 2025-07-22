@@ -13,9 +13,11 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
-const base_url = import.meta.env.VITE_API_BASE_URL;
+// import Cookies from "js-cookie";
+// const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
+// const base_url = import.meta.env.VITE_API_BASE_URL;
+
+import { useAuth } from "../../../AppProvider";
 
 interface LoginFormData {
   email: string;
@@ -38,6 +40,8 @@ function LoginPage() {
     },
   });
 
+  const { auth, login } = useAuth();
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -45,49 +49,25 @@ function LoginPage() {
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${base_url}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const success = await login(data); // login from useAuth()
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        const errorMessage = errorData?.detail || "Invalid email or password";
-        toast.error(errorMessage, { position: "bottom-right" });
+      if (!success) {
+        toast.error("Invalid email or password", { position: "bottom-right" });
         reset();
-        throw new Error(errorMessage);
+        return;
       }
-
-      const res = await response.json();
-
-      // const userData = { ...res, user_role: "vendor" };
-      const userData = { ...res, user_role: "accountant" };
-      sessionStorage.setItem("access_token", userData.access_token);
-      localStorage.setItem("user", JSON.stringify(userData.user));
-      localStorage.setItem("user_role", JSON.stringify(userData.user_role));
-
-      Cookies.set("refresh_token", userData.refresh_token, {
-        path: "/",
-        secure: true,
-        sameSite: "strict",
-        expires: 7, // 7 days
-      });
 
       toast.success("Login successful!", { position: "bottom-right" });
 
-      // Ensure Toast is shown before redirect (slight delay optional)
       setTimeout(() => {
-        navigate("/dashboard/");
+        navigate("/dashboard");
       }, 500);
 
       reset();
     } catch (error) {
-      console.error("Error logging in:", error);
+      console.error("Login error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -97,12 +77,12 @@ function LoginPage() {
         p={4}
         borderRadius={4}
         boxShadow={4}
-        minWidth={400}
         textAlign="center"
-        bgcolor="rgba(255, 255, 255, 0.3)"
+        bgcolor="rgba(255, 255, 255, 0.6)"
         sx={{
-          boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.6)",
+          boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.8)",
         }}
+        className="w-[350px] sm:w-[450px]"
       >
         <h2 className="mb-2 font-bold text-4xl">Welcome Back</h2>
         <p className="text-[#6b7280] mb-4 ">Enter your details below</p>
@@ -158,15 +138,15 @@ function LoginPage() {
             sx={{
               borderRadius: "16px",
               height: "48px",
-              background: "linear-gradient(90deg, #6b46e5 0%, #b764e8 100%)",
+              background: "linear-gradient(90deg, #121f54 , #2563eb )",
               "&:hover": {
-                background: "linear-gradient(90deg, #5a3ab5 0%, #9751c2 100%)",
+                background: "linear-gradient(90deg, #1e3d8d 30%, #121f54 )",
               },
               color: "white",
             }}
           >
             {isLoading ? (
-              <CircularProgress size={24} color="inherit" />
+              <CircularProgress size={24} className="text-white" />
             ) : (
               "Sign in"
             )}
@@ -197,6 +177,7 @@ function LoginPage() {
 
         <Box display="flex" justifyContent="center" gap={2}>
           <Button
+            disabled
             variant="outlined"
             startIcon={<Google />}
             sx={{
@@ -215,6 +196,7 @@ function LoginPage() {
             Google
           </Button>
           <Button
+            disabled
             variant="outlined"
             startIcon={<Facebook />}
             sx={{
@@ -233,22 +215,6 @@ function LoginPage() {
             Facebook
           </Button>
         </Box>
-
-        <p
-          style={{
-            marginTop: "16px",
-            fontSize: "0.9rem",
-            color: "#333",
-          }}
-        >
-          Don’t have an account?{" "}
-          <Link
-            to="/signup"
-            style={{ color: "#4f46e5", textDecoration: "none" }}
-          >
-            Sign up
-          </Link>
-        </p>
       </Box>
       <ToastContainer />
     </Box>

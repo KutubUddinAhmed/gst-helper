@@ -16,7 +16,7 @@ const App: React.FC = () => {
         {/* Public Routes */}
         <Route path="/" element={<DefaultLayout />}>
           <Route path="login" element={<AuthPage />} />
-          <Route path="signup" element={<AuthPage />} />
+          {/* <Route path="signup" element={<AuthPage />} /> */}
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Route>
 
