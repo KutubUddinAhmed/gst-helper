@@ -20,9 +20,7 @@ import { ArrowOutwardOutlined, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import the hook
 import vendorList from "./vendorList";
 
-
 function Vendor() {
-
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"Latest" | "Oldest">("Latest");
@@ -147,10 +145,10 @@ function Vendor() {
       </div>
 
       {/* Table with horizontal scroll on small devices */}
-      <div className="overflow-x-auto rounded-lg shadow-md border mx-1">
+      <div className="overflow-x-auto rounded-lg mx-1  flex flex-col space-y-3 min-h-[66vh] ">
         <TableContainer
           component={Paper}
-          className="border border-black"
+          className="border border-black min-h-[500px] md:min-h-[710px]"
           sx={{
             borderRadius: "10px",
           }}
@@ -269,32 +267,31 @@ function Vendor() {
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
 
-      {/* Pagination */}
-      <div className="overflow-x-auto -mt-5">
-        <TablePagination
-          component="div"
-          count={filteredVendors.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[]}
-          sx={{
-            backgroundColor: "#15254D",
-            borderRadius: "10px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            color: "white",
-            mt: 2,
-          }}
-        />
+        {/* Pagination */}
+        <div className="overflow-x-auto -mt-5">
+          <TablePagination
+            component="div"
+            count={filteredVendors.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPageOptions={[]}
+            sx={{
+              backgroundColor: "#15254D",
+              borderRadius: "10px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+              color: "white",
+              mt: 2,
+            }}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
 export default Vendor;
-
 
 function useResponsiveRowsPerPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10); // default for desktop

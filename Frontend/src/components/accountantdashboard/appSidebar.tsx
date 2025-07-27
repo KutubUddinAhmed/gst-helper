@@ -64,13 +64,13 @@ export function AppSidebar() {
           background: "linear-gradient(to bottom, #080a2d, #121f54, #1e3d8d)",
         }}
       >
-        <SidebarGroup>
+        <SidebarGroup className="h-full">
           <SidebarGroupLabel
-            className={`mb-6 text-white text-center mx-auto font-semibold transition-opacity`}
+            className={`my-4 text-white text-center mx-auto font-semibold transition-opacity`}
           >
             GST HELPER
           </SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent className="h-full flex flex-col justify-between">
             <SidebarMenu className="flex flex-col">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
@@ -110,6 +110,19 @@ export function AppSidebar() {
                 </button>
               </SidebarMenuItem>
             </SidebarMenu>
+
+            {/* Trial Subscription Box */}
+            <div className="p-1 h-[250px]">
+              <div className="bg-[#0b1a3d] flex flex-col justify-between rounded-lg p-3 text-white h-full">
+                <div className="text-sm font-medium mb-2">GST Helper</div>
+                <button
+                  type="button"
+                  className="w-full py-2 text-sm font-semibold rounded bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

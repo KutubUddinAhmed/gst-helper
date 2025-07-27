@@ -30,6 +30,8 @@ import { useState } from "react";
 
 function VendorProfile() {
   const { user_id }: any = useParams();
+  const [fileTypeFilter, setFileTypeFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const profile = vendorList.find((v) => v.user_id.toString() === user_id);
   const tableDataFileList = fileList.filter(
@@ -140,6 +142,36 @@ function VendorProfile() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+
+            <FormControl className="w-36" size="small">
+              <InputLabel>File Type</InputLabel>
+              <Select
+                value={fileTypeFilter}
+                onChange={(e) => setFileTypeFilter(e.target.value)}
+                label="File Type"
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="pdf">PDF</MenuItem>
+                <MenuItem value="jpg">JPG</MenuItem>
+                <MenuItem value="docx">DOCX</MenuItem>
+                <MenuItem value="xlsx">XLSX</MenuItem>
+                {/* Add other types you support */}
+              </Select>
+            </FormControl>
+
+            <FormControl className="w-36" size="small">
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                label="Status"
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="Approved">Approved</MenuItem>
+                <MenuItem value="Rejected">Rejected</MenuItem>
+              </Select>
+            </FormControl>
+
             <FormControl className="w-36" size="small">
               <InputLabel>Sort</InputLabel>
               <Select

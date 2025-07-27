@@ -8,6 +8,7 @@ import VendorProfile from "./components/Vendor/VendorProfile";
 import AuthPage from "./components/auth/AuthPage";
 import UnauthorizedPage from "./components/auth/UnauthorizedPage"
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
+import AccountantProfile from "./components/profile/AccountantProfile";
 
 const App: React.FC = () => {
   return (
@@ -27,10 +28,12 @@ const App: React.FC = () => {
             <ProtectedRoute allowedRoles={["accountant", "superuser"]}>
               <DashboardLayout />
             </ProtectedRoute>
-          }>
+          }
+        >
           <Route index element={<AccountantDashboard />} />
           <Route path="vendor" element={<Vendor />} />
           <Route path="vendor/:user_id" element={<VendorProfile />} />
+          <Route path="profile" element={<AccountantProfile />} />
         </Route>
       </Routes>
     </Router>

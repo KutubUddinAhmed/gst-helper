@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Add } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SignupModal from "./SignupModal";
 // import { useAuth } from "../../AppProvider";
 
@@ -14,28 +15,28 @@ const AccountantDashboard = () => {
 
   return (
     <div className="bg-[#fff] p-4 h-full w-[90vw] md:w-[80vw] mx-auto">
-
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mx-auto">
         {/* Box 1: Add Vendor */}
         <Box
           onClick={handleOpenModal}
           sx={{
-            border: "2px dashed #9c27b0",
+            borderRadius: "20px",
             padding: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            maxHeight: "100px",
-            maxWidth: "200px",
+            minHeight: "150px",
+            maxWidth: "250px",
+            backgroundColor: "#DADFEA",
             "&:hover": {
-              backgroundColor: "#f3e5f5",
+              backgroundColor: "#7A8BB1",
             },
           }}
         >
-          <Add sx={{ color: "#9c27b0", fontSize: 40 }} />
-          <Typography variant="body1" sx={{ marginTop: 1, color: "#9c27b0" }}>
+          <Add sx={{ fontSize: 50 }} />
+          <Typography variant="h6" sx={{ marginTop: 1, color: "#000" }}>
             Add Vendor
           </Typography>
         </Box>
@@ -43,20 +44,23 @@ const AccountantDashboard = () => {
         {/* Box 2 */}
         <Box
           sx={{
-            border: "2px dashed #4caf50",
+            borderRadius: "20px",
             padding: 2,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            maxHeight: "100px",
-            maxWidth: "200px",
             cursor: "pointer",
+            minHeight: "150px",
+            maxWidth: "250px",
+            backgroundColor: "#DADFEA",
             "&:hover": {
-              backgroundColor: "#e8f5e9",
+              backgroundColor: "#DADFEA",
             },
           }}
         >
-          <Typography variant="body1" sx={{ color: "#4caf50" }}>
+          <AddCircleOutlineIcon sx={{ fontSize: 50 }} />
+          <Typography variant="h6" sx={{ color: "#000" }}>
             Box 2
           </Typography>
         </Box>
@@ -64,20 +68,23 @@ const AccountantDashboard = () => {
         {/* Box 3 */}
         <Box
           sx={{
-            border: "2px dashed #2196f3",
+            borderRadius: "20px",
             padding: 2,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: "100px",
-            maxWidth: "200px",
             cursor: "pointer",
+            minHeight: "150px",
+            maxWidth: "250px",
+            backgroundColor: "#DADFEA",
             "&:hover": {
-              backgroundColor: "#e3f2fd",
+              backgroundColor: "#DADFEA",
             },
           }}
         >
-          <Typography variant="body1" sx={{ color: "#2196f3" }}>
+          <AddCircleOutlineIcon sx={{ fontSize: 50 }} />
+          <Typography variant="h6" sx={{ color: "#000" }}>
             Box 3
           </Typography>
         </Box>
@@ -85,20 +92,23 @@ const AccountantDashboard = () => {
         {/* Box 4 */}
         <Box
           sx={{
-            border: "2px dashed #ff5722",
+            borderRadius: "20px",
             padding: 2,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            minHeight: "100px",
-            maxWidth: "200px",
+            minHeight: "150px",
+            maxWidth: "250px",
+            backgroundColor: "#DADFEA",
             "&:hover": {
-              backgroundColor: "#fbe9e7",
+              backgroundColor: "#DADFEA",
             },
           }}
         >
-          <Typography variant="body1" sx={{ color: "#ff5722" }}>
+          <AddCircleOutlineIcon sx={{ fontSize: 50 }} />
+          <Typography variant="h6" sx={{ color: "#000" }}>
             Box 4
           </Typography>
         </Box>
