@@ -104,24 +104,17 @@ function VendorProfile() {
       <div className="flex flex-col  bg-[#fff] h-full w-full  px-3 pt-2">
         {/* Left Section */}
         <div
-          className="h-[300px] min-w-[350px] border-2 border-white bg-[#121f54e0] p-4 rounded-lg"
+          className="h-[70px] min-w-[350px] border-2 border-white bg-[#121f54e0] p-4 rounded-lg "
           style={{
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Typography
-            variant="h6"
-            className="text-black font-bold inline-block py-1 px-1.5 bg-white  rounded-xl "
-            gutterBottom
-          >
-            Vendor Details
-          </Typography>
-          <div className="flex gap-2 border-2 border-white mt-2 max-w-1/2 items-center justify-between ">
+          <div className="flex  gap-2 max-w-1/2 items-center justify-between text-white min-w-full">
             <Typography>
               <strong>Name:</strong> {profile?.name || "N/A"}
             </Typography>
             <Typography>
-              <strong>Email:</strong> {profile?.email || "N/A"}
+              <strong>Email:</strong> {profile?.email || "example@emaple.com"}
             </Typography>
             <Typography>
               <strong>Phone:</strong> {profile?.phone || "N/A"}

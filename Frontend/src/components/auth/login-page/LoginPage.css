@@ -1,0 +1,61 @@
+/* Layout fills full viewport width and height */
+.login-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 16px;            /* some breathing room on mobile */
+    gap: 24px;
+    align-items: center;      /* vertically center content */
+    justify-content: center;  /* center when image is hidden */
+  }
+  
+  /* Left panel: image + link (visible on large screens only) */
+  .image-panel {
+    flex: 1 1 50%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  
+  .login-image {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* Right panel: form */
+  .form-panel {
+    flex: 1 1 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0; /* prevent overflow on small screens */
+  }
+  
+  /* ——— Responsive behavior ——— */
+  /* Hide the image on small/medium screens; show only the form */
+  @media (max-width: 499px) {
+    .login-layout {
+      padding: 12px;
+    }
+    .image-panel {
+      display: none;
+    }
+    .form-panel {
+      flex: 1 1 100%;
+    }
+  }
+  
+  /* Slightly wider spacing on very large screens */
+  @media (min-width: 1400px) {
+    .login-layout {
+      gap: 40px;
+    }
+  }
+  

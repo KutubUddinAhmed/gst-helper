@@ -46,12 +46,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Redirect if unauthorized
-  if (!isAuthorized) {
-    return <Navigate to={auth.accessToken ? "/unauthorized" : "/login"} />;
-  }
+  // if (!isAuthorized) {
+  //   return <Navigate to={auth.accessToken ? "/unauthorized" : "/login"} />;
+  // }
 
   // Render the protected component if authorized
   return <>{children}</>;
 };
+
 
 export default ProtectedRoute;

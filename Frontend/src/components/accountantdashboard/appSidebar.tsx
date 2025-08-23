@@ -117,7 +117,7 @@ export function AppSidebar() {
                 <div className="text-sm font-medium mb-2">GST Helper</div>
                 <button
                   type="button"
-                  className="w-full py-2 text-sm font-semibold rounded bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:opacity-90 transition"
+                  className="w-full py-2 text-sm font-semibold rounded bg-gradient-to-r from-[#6b20ac] to-[#a410a1] text-white hover:opacity-90 transition"
                 >
                   Subscribe
                 </button>

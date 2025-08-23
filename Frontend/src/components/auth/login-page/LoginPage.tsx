@@ -1,21 +1,32 @@
 import {
-  TextField,
-  Button,
   Box,
-  Divider,
+  Paper,
+  Typography,
+  TextField,
+  InputAdornment,
   IconButton,
+  Button,
+  Divider,
   CircularProgress,
+  Stack,
+  Tooltip,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Google, Facebook } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  PersonOutline,
+  LockOutlined,
+  Google,
+  Facebook,
+} from "@mui/icons-material";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
-// import Cookies from "js-cookie";
-// const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
-// const base_url = import.meta.env.VITE_API_BASE_URL;
+
+import LoginImage from "../../../assets/loginPage.jpg";
+import "./LoginPage.css";
 
 import { useAuth } from "../../../AppProvider";
 
@@ -28,196 +39,198 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<LoginFormData>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
-  const { auth, login } = useAuth();
+  const { login } = useAuth();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
+  const togglePasswordVisibility = () => setShowPassword((p) => !p);
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setIsLoading(true);
     try {
-      const success = await login(data); // login from useAuth()
+      const success = await login(data);
 
       if (!success) {
         toast.error("Invalid email or password", { position: "bottom-right" });
-        reset();
+        reset({ password: "" });
         return;
       }
 
       toast.success("Login successful!", { position: "bottom-right" });
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 500);
-
+      setTimeout(() => navigate("/dashboard"), 500);
       reset();
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center">
-      <Box
-        p={4}
-        borderRadius={4}
-        boxShadow={4}
-        textAlign="center"
-        bgcolor="rgba(255, 255, 255, 0.6)"
-        sx={{
-          boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.8)",
-        }}
-        className="w-[350px] sm:w-[450px]"
-      >
-        <h2 className="mb-2 font-bold text-4xl">Welcome Back</h2>
-        <p className="text-[#6b7280] mb-4 ">Enter your details below</p>
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            fullWidth
-            label="Email Address"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email format",
-              },
-            })}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-            variant="outlined"
-            InputProps={{
-              style: { borderRadius: "16px" },
-            }}
+    <>
+      <div className="login-layout">
+        {/* Left: Illustration + Create account link (hidden on small screens) */}
+        <div className="image-panel">
+          <img
+            src={LoginImage}
+            alt="Login illustration"
+            className="login-image"
           />
+        </div>
 
-          <TextField
-            fullWidth
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            error={!!errors.password}
-            helperText={errors.password?.message}
-            variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <IconButton onClick={togglePasswordVisibility}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              ),
-              style: { borderRadius: "16px" },
-            }}
-          />
-
-          <Button
-            fullWidth
-            type="submit"
-            variant="contained"
-            disabled={isLoading}
+        {/* Right: Form */}
+        <div className="form-panel">
+          <Paper
+            elevation={0}
             sx={{
-              borderRadius: "16px",
-              height: "48px",
-              background: "linear-gradient(90deg, #121f54 , #2563eb )",
-              "&:hover": {
-                background: "linear-gradient(90deg, #1e3d8d 30%, #121f54 )",
-              },
-              color: "white",
+              width: "100%",
+              maxWidth: 520,
+              borderRadius: 3,
+              p: { xs: 2, sm: 3, md: 4 },
+              boxShadow:
+                "0 10px 20px rgba(0,0,0,0.06), 0 6px 6px rgba(0,0,0,0.05)",
+              bgcolor: "#fff",
             }}
           >
-            {isLoading ? (
-              <CircularProgress size={24} className="text-white" />
-            ) : (
-              "Sign in"
-            )}
-          </Button>
-        </form>
+            <Box
+              component="form"
+              onSubmit={handleSubmit(onSubmit)}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: 2.5,
+              }}
+            >
+              <Typography variant="h4" fontWeight={800}>
+                Log In
+              </Typography>
 
-        <Link
-          to="/forgot-password"
-          style={{
-            display: "block",
-            marginTop: "16px",
-            color: "#4f46e5",
-            textDecoration: "none",
-            fontSize: "0.9rem",
-          }}
-        >
-          Forgot your password?
-        </Link>
+              <TextField
+                fullWidth
+                label="Your Address"
+                variant="standard"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email format",
+                  },
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonOutline fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-        <Divider
-          style={{
-            margin: "16px 0",
-            color: "#6b7280",
-          }}
-        >
-          Or sign in with
-        </Divider>
+              <TextField
+                fullWidth
+                label="Password"
+                variant="standard"
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlined fontSize="small" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-        <Box display="flex" justifyContent="center" gap={2}>
-          <Button
-            disabled
-            variant="outlined"
-            startIcon={<Google />}
-            sx={{
-              width: "48%",
-              borderRadius: "16px",
-              borderColor: "black",
-              height: "48px",
-              textTransform: "none",
-              fontSize: "0.9rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "black",
-            }}
-          >
-            Google
-          </Button>
-          <Button
-            disabled
-            variant="outlined"
-            startIcon={<Facebook />}
-            sx={{
-              width: "48%",
-              borderRadius: "16px",
-              borderColor: "black",
-              color: "black",
-              height: "48px",
-              textTransform: "none",
-              fontSize: "0.9rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            Facebook
-          </Button>
-        </Box>
-      </Box>
+              <Button
+                type="submit"
+                fullWidth
+                disabled={isLoading}
+                sx={{
+                  mt: 0.5,
+                  borderRadius: 2,
+                  height: 44,
+                  bgcolor: "#5b9bd5",
+                  color: "white",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  "&:hover": { bgcolor: "#4b83b6" },
+                }}
+              >
+                {isLoading ? <CircularProgress size={22} /> : "Log in"}
+              </Button>
+
+              <Divider sx={{ my: { xs: 0, md: 1.5 }, color: "#6b7280" }}>
+                Or login with
+              </Divider>
+
+              <Stack direction="row" spacing={1}>
+                <Tooltip title="Google (coming soon)">
+                  <span>
+                    <IconButton
+                      disabled
+                      sx={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: 2,
+                        width: 40,
+                        height: 40,
+                      }}
+                    >
+                      <Google fontSize="small" />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+
+                <Tooltip title="Facebook (coming soon)">
+                  <span>
+                    <IconButton
+                      disabled
+                      sx={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: 2,
+                        width: 40,
+                        height: 40,
+                      }}
+                    >
+                      <Facebook fontSize="small" />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              </Stack>
+            </Box>
+          </Paper>
+        </div>
+      </div>
+
       <ToastContainer />
-    </Box>
+    </>
   );
 }
 

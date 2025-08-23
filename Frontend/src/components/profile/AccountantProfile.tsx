@@ -12,6 +12,7 @@ import {
   Button,
   Box,
 } from "@mui/material";
+
 import EditIcon from "@mui/icons-material/Edit";
 
 const initialData = {
@@ -92,7 +93,8 @@ export default function AccountantProfile() {
               </IconButton>
             </Box>
           </Paper>
-        </Box>
+              </Box>  
+                 
 
         {/* Stats Section */}
 

@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import React, { type ReactNode } from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 const base_url = import.meta.env.VITE_API_BASE_URL;
+// const base_url = import.meta.env.VITE_API_LOCAL_URL;
 
 interface AuthState {
   accessToken: string;
