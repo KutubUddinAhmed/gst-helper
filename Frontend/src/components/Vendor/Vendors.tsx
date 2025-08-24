@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   MenuItem,
-  Select,
   FormControl,
   InputLabel,
   Table,
@@ -17,18 +16,48 @@ import {
   Tooltip,
 } from "@mui/material";
 import { ArrowOutwardOutlined, Delete } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom"; // Import the hook
-import vendorList from "./vendorList";
+import { useNavigate } from "react-router-dom";
+import Select from "@mui/material/Select";
+import type { SelectChangeEvent } from "@mui/material/Select";
 
 function Vendor() {
+  const [vendors, setVendors] = useState<any[]>([]);
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState<"Latest" | "Oldest">("Latest");
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
   const rowsPerPage = useResponsiveRowsPerPage();
+  
+  const base_url = import.meta.env.VITE_API_BASE_URL;
 
-  const navigate = useNavigate(); // Initialize the hook
+
+
+  type SortOrder = "Latest" | "Oldest";
+  
+  const [sortOrder, setSortOrder] = useState<SortOrder>("Latest");
+
+  const navigate = useNavigate();
+
+  // ✅ Fetch vendor list from API
+  useEffect(() => {
+    const fetchVendors = async () => {
+      const userString = localStorage.getItem("user");
+      const OwnerData = userString ? JSON.parse(userString) : null;
+      const AccountantEmnail = OwnerData.email;
+      const vendorUrl = `${base_url}/get-vendors-by-accountant?created_by=${AccountantEmnail}`;
+      try {
+        const response = await fetch(vendorUrl);
+        const data = await response.json();
+        if (data?.vendors) {
+          setVendors(data.vendors);
+        }
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+      }
+    };
+
+    fetchVendors();
+  }, []);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -39,10 +68,14 @@ function Vendor() {
     setPage(0);
   };
 
-  const handleSortChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSortOrder(event.target.value as "Latest" | "Oldest");
+  const handleSortChange = (event: SelectChangeEvent) => {
+    return setSortOrder(event.target.value as SortOrder);
   };
 
+  // 4) Wire up labelId/id so the label works without warnings
+  const labelId = "vendor-sort-label";
+  const selectId = "vendor-sort";
+  
   const handleFromDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFromDate(event.target.value);
     setPage(0);
@@ -56,13 +89,14 @@ function Vendor() {
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString("en-GB");
 
-  const filteredVendors = vendorList
+  // ✅ Filtering + Sorting
+  const filteredVendors = vendors
     .filter((vendor) => {
       const searchLower = searchTerm.toLowerCase();
       return (
-        vendor.name.toLowerCase().includes(searchLower) ||
-        vendor.business.toLowerCase().includes(searchLower) ||
-        vendor.address.toLowerCase().includes(searchLower)
+        vendor.first_name.toLowerCase().includes(searchLower) ||
+        vendor.last_name.toLowerCase().includes(searchLower) ||
+        vendor.email.toLowerCase().includes(searchLower)
       );
     })
     .filter((vendor) => {
@@ -87,28 +121,29 @@ function Vendor() {
     page * rowsPerPage + rowsPerPage
   );
 
-  const handleViewVendor = (userId: string | number) => {
-    navigate(`/dashboard/vendor/${userId}`);
+  const handleViewVendor = (vendorId: string) => {
+    navigate(`/dashboard/vendor/${vendorId}`);
   };
 
   return (
     <div className="h-full bg-white w-[100vw] lg:w-full mx-auto px-1 sm:px-1 space-y-4 pb-4">
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4 mt-6">
-        {/* First row for md and above: Search + Filter */}
         <div className="flex flex-col md:flex-row lg:w-1/2 gap-4">
           <TextField
             variant="outlined"
             label="Search Vendors"
-            placeholder="Search by Name, Business, or Address"
+            placeholder="Search by Name or Email"
             size="small"
             value={searchTerm}
             onChange={handleSearchChange}
             className="w-full md:flex-1"
           />
           <FormControl size="small" className="w-full md:flex-1">
-            <InputLabel>Filter</InputLabel>
+            <InputLabel id={labelId}>Filter</InputLabel>
             <Select
+              labelId={labelId}
+              id={selectId}
               value={sortOrder}
               onChange={handleSortChange}
               label="Filter"
@@ -119,7 +154,7 @@ function Vendor() {
           </FormControl>
         </div>
 
-        {/* Second row for md and above: From + To */}
+        {/* Date Filters */}
         <div className="flex flex-col md:flex-row lg:w-1/2 gap-4">
           <TextField
             variant="outlined"
@@ -144,86 +179,29 @@ function Vendor() {
         </div>
       </div>
 
-      {/* Table with horizontal scroll on small devices */}
-      <div className="overflow-x-auto rounded-lg mx-1  flex flex-col space-y-3 min-h-[66vh] ">
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg mx-1 flex flex-col space-y-3 min-h-[66vh]">
         <TableContainer
           component={Paper}
           className="border border-black min-h-[500px] md:min-h-[710px]"
-          sx={{
-            borderRadius: "10px",
-          }}
+          sx={{ borderRadius: "10px" }}
         >
           <Table stickyHeader>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F3F4F6" }}>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="max-w-9 sm:w-16 md:w-20 "
-                >
+                <TableCell sx={{ fontWeight: "bold", color: "#0A345E" }}>
                   No.
                 </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="w-32 sm:min-w-36 md:w-48 "
-                >
+                <TableCell sx={{ fontWeight: "bold", color: "#0A345E" }}>
                   Vendor Name
                 </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="min-w-44 sm:min-w-50 md:w-64 "
-                >
-                  Address
+                <TableCell sx={{ fontWeight: "bold", color: "#0A345E" }}>
+                  Email
                 </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="min-w-40 sm:w-36 md:w-44 "
-                >
-                  Phone
+                <TableCell sx={{ fontWeight: "bold", color: "#0A345E" }}>
+                  Created At
                 </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="w-36 sm:w-44 md:w-52 "
-                >
-                  Business Name
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="w-24 sm:w-32 md:w-40 "
-                >
-                  Date
-                </TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0A345E",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="min-w-28 sm:w-28 md:w-32  "
-                >
+                <TableCell sx={{ fontWeight: "bold", color: "#0A345E" }}>
                   Actions
                 </TableCell>
               </TableRow>
@@ -237,21 +215,17 @@ function Vendor() {
                     backgroundColor: index % 2 === 0 ? "#BDE0FE" : "#F1FFFF",
                   }}
                 >
-                  <TableCell sx={{ py: 1 }}>
-                    {page * rowsPerPage + index + 1}
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                  <TableCell>
+                    {vendor.first_name} {vendor.last_name}
                   </TableCell>
-                  <TableCell sx={{ py: "3px" }}>{vendor.name}</TableCell>
-                  <TableCell sx={{ py: "3px" }}>{vendor.address}</TableCell>
-                  <TableCell sx={{ py: "3px" }}>{vendor.phone}</TableCell>
-                  <TableCell sx={{ py: "3px" }}>{vendor.business}</TableCell>
-                  <TableCell sx={{ py: "3px" }}>
-                    {formatDate(vendor.created_at)}
-                  </TableCell>
-                  <TableCell sx={{ py: "3px" }}>
+                  <TableCell>{vendor.email}</TableCell>
+                  <TableCell>{formatDate(vendor.created_at)}</TableCell>
+                  <TableCell>
                     <Tooltip title="View">
                       <IconButton
                         color="primary"
-                        onClick={() => handleViewVendor(vendor.user_id)}
+                        onClick={() => handleViewVendor(vendor.id)}
                       >
                         <ArrowOutwardOutlined />
                       </IconButton>
@@ -293,22 +267,23 @@ function Vendor() {
 
 export default Vendor;
 
+// ✅ Rows per page responsive hook
 function useResponsiveRowsPerPage() {
-  const [rowsPerPage, setRowsPerPage] = useState(10); // default for desktop
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   React.useEffect(() => {
     function updateRows() {
       const width = window.innerWidth;
       if (width < 640) {
-        setRowsPerPage(10); // mobile
+        setRowsPerPage(10);
       } else if (width < 1024) {
-        setRowsPerPage(13); // tablet
+        setRowsPerPage(13);
       } else {
-        setRowsPerPage(14); // desktop
+        setRowsPerPage(14);
       }
     }
 
-    updateRows(); // run on mount
+    updateRows();
     window.addEventListener("resize", updateRows);
     return () => window.removeEventListener("resize", updateRows);
   }, []);

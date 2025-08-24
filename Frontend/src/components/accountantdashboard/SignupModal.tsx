@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../AppProvider";
 
 const base_url = import.meta.env.VITE_API_BASE_URL;
-const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
+// const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
 
 interface SignupFormData {
   email: string;
@@ -66,7 +66,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ open, onClose }) => {
     data.created_by = accountantEmail;
 
     try {
-      const response = await fetch(`${local_base_url}/signup`, {
+      const response = await fetch(`${base_url}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
