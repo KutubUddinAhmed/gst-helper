@@ -15,14 +15,16 @@ import {
   InputLabel,
   MenuItem,
   TablePagination,
+  CircularProgress,
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { Delete, CropFreeRounded } from "@mui/icons-material";
 import vendorList from "./vendorList";
-import fileList from "./fileList";
 import React, { useEffect, useMemo, useState } from "react";
 import ImagePreviewDialog from "./ImagePreviewDialog";
+
+
 
 // --- helpers ---
 const formatDate = (date: string) => new Date(date).toLocaleDateString("en-GB");
@@ -50,7 +52,7 @@ function useResponsiveRowsPerPage() {
       } else if (width < 1024) {
         setRowsPerPage(12);
       } else if (width > 1600) {
-        setRowsPerPage(12)
+        setRowsPerPage(12);
       }
     }
     updateRows();
@@ -59,6 +61,79 @@ function useResponsiveRowsPerPage() {
   }, []);
 
   return rowsPerPage;
+}
+
+/** ---- Types for API docs ---- */
+type ApiDoc = {
+  file_path?: string;
+  filePath?: string;
+  path?: string;
+  file?: string;
+  url?: string;
+  link?: string;
+  file_url?: string;
+
+  type?: string;
+  document_type?: string;
+
+  status?: string;
+
+  created_at?: string;
+  createdAt?: string;
+  uploaded_at?: string;
+  date?: string;
+
+  updated_at?: string;
+  updatedAt?: string;
+};
+
+type Doc = {
+  file_path: string; // used for name & fallback href
+  type: string;
+  created_at: string;
+  updated_at?: string;
+  status?: string;
+  url?: string; // used for preview href if present
+};
+
+function normalizeDoc(d: ApiDoc): Doc | null {
+  const file_path =
+    d.file_path ||
+    d.filePath ||
+    d.path ||
+    d.file ||
+    d.url ||
+    d.link ||
+    d.file_url;
+  const created_at = d.created_at || d.createdAt || d.uploaded_at || d.date;
+  const url = d.url || d.link || d.file_url || undefined;
+  const type = (d.type || d.document_type || "").toString();
+  if (!file_path || !created_at) return null;
+  return {
+    file_path,
+    type,
+    created_at,
+    updated_at: d.updated_at || d.updatedAt,
+    status: d.status,
+    url,
+  };
+}
+
+function normalizeApiPayload(payload: any): {
+  vendor_id?: string | number;
+  documents: Doc[];
+} {
+  // Accept either { vendor_id, documents: [...] } or a bare array
+  const rawDocs: any[] = Array.isArray(payload?.documents)
+    ? payload.documents
+    : Array.isArray(payload)
+    ? payload
+    : [];
+  const documents = rawDocs.map(normalizeDoc).filter(Boolean) as Doc[];
+  return {
+    vendor_id: payload?.vendor_id ?? payload?.user_id ?? payload?.vendorId,
+    documents,
+  };
 }
 
 function VendorProfile() {
@@ -71,33 +146,104 @@ function VendorProfile() {
   const [fromDate, setFromDate] = useState<string | null>(null);
   const [toDate, setToDate] = useState<string | null>(null);
   const rowsPerPage = useResponsiveRowsPerPage();
+  const [vendors, setVendors] = useState<any[]>([]);
+
+  console.log("VENDORS : ", vendors);
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [previewTitle, setPreviewTitle] = useState<string>("");
+  const base_url = import.meta.env.VITE_API_BASE_URL;
 
-  // find vendor profile (best-effort, since vendorList may differ)
-  const profile = useMemo(
-    () =>
-      vendorList.find(
-        (v: any) => String(v.user_id ?? v.id) === String(user_id)
-      ),
-    [user_id]
-  );
+  // ✅ API state
+  const [documents, setDocuments] = useState<Doc[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
-  // ✅ Only include documents if vendor_id matches the URL param user_id
-  const documents: Array<{
-    file_path: string;
-    type: string;
-    created_at: string;
-    updated_at?: string;
-    status?: string;
-    url?: string;
-  }> =
-    String(fileList.vendor_id) === String(user_id) &&
-    Array.isArray(fileList.documents)
-      ? fileList.documents
-      : [];
+  // ✅ Fetch vendor documents from API
+  useEffect(() => {
+    if (!user_id) return;
+
+    const controller = new AbortController();
+    const API_URL = `/api/get-vendor-doc?user_id=${encodeURIComponent(
+      String(user_id)
+    )}`;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(API_URL, {
+          method: "GET",
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            // ...authHeader,
+          },
+          credentials: "include", // remove if CORS/cookies not needed
+        });
+
+        if (res.status === 404) {
+          // 👇 Treat 404 as "no docs" UX instead of an error row
+          setNotFound(true);
+          setDocuments([]);
+          return;
+        }
+        if (!res.ok) {
+          throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+        }
+        const json = await res.json();
+        const normalized = normalizeApiPayload(json);
+
+        // Optional: if the backend might return mixed vendor docs, filter by user_id
+        const filtered =
+          String(normalized.vendor_id ?? user_id) === String(user_id)
+            ? normalized.documents
+            : normalized.documents.filter(Boolean);
+
+        setDocuments(filtered);
+      } catch (err: any) {
+        if (err?.name !== "AbortError") {
+          setError(err?.message || "Failed to fetch documents.");
+          setDocuments([]);
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
+
+    return () => controller.abort();
+  }, [user_id]);
+
+  // ✅ Fetch vendor list from API
+  useEffect(() => {
+    const fetchVendors = async () => {
+      const userString = localStorage.getItem("user");
+      const OwnerData = userString ? JSON.parse(userString) : null;
+      const AccountantEmnail = OwnerData.email;
+      const vendorUrl = `${base_url}/get-vendors-by-accountant?created_by=${AccountantEmnail}`;
+      try {
+        const response = await fetch(vendorUrl);
+        const data = await response.json();
+        if (data?.vendors) {
+          setVendors(data.vendors);
+        }
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+      }
+    };
+
+    fetchVendors();
+  }, []);
+
+  // replace your existing 'profile' memo with this:
+  const profile = useMemo(() => {
+    // try API list first
+    const fromApi = vendors.find((v: any) => String(v.id) === String(user_id));
+    if (fromApi) return fromApi;
+  }, [vendors, user_id]);
+
 
   // ✅ Filtering + sorting
   const filteredDocs = useMemo(() => {
@@ -105,7 +251,7 @@ function VendorProfile() {
 
     const typeMatches = (docType: string) => {
       if (fileTypeFilter === "All") return true;
-      return docType.toLowerCase() === fileTypeFilter.toLowerCase();
+      return (docType || "").toLowerCase() === fileTypeFilter.toLowerCase();
     };
 
     const statusMatches = (status?: string) => {
@@ -183,21 +329,19 @@ function VendorProfile() {
           className="max-h-[100px] md:h-[auto] md:min-h-[70px] lg:min-h-[40px] min-w-[350px] bg-[#121f54e0] p-1 md:p-1 lg:p-2 border border-gray-300 rounded-lg"
           style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
         >
-          <div className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-between text-white w-full">
+          <div className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-between text-white w-full lg:px-10">
             <Typography>
               <strong>Name:</strong>{" "}
-              {profile?.name ??
-                (`${profile?.first_name ?? ""} ${
-                  profile?.last_name ?? ""
-                }`.trim() ||
-                  "Venugopalan Shivkumar Iyer")}
+              {`${profile?.first_name ?? ""} ${
+                profile?.last_name ?? ""
+              }`.trim()}
             </Typography>
             <Typography>
-              <strong>Email:</strong> {profile?.email || "example@example.com"}
+              <strong>Email:</strong> {profile?.email}
             </Typography>
-            <Typography>
+            {/* <Typography>
               <strong>Phone:</strong> {profile?.phone || "9865782556"}
-            </Typography>
+            </Typography> */}
           </div>
         </div>
 
@@ -296,12 +440,12 @@ function VendorProfile() {
           </div>
         </div>
 
-        {/* Table + Pagination wrapper (same structure as Vendor screen) */}
+        {/* Table + Pagination wrapper */}
         <div className="overflow-x-auto rounded-sm lg:rounded-lg mt-2 flex flex-col max-h-[66vh] md:min-h-[66vh] lg:min-h-[78vh]">
-          <TableContainer 
+          <TableContainer
             component={Paper}
-            className="border border-black max-h-[57vh] md:min-h-[59vh] xl:min-h-[70vh]"
-            sx={{borderRadius: "10px"}}
+            className="border border-black max-h-[57vh] md:minh-[59vh] xl:min-h-[70vh]"
+            sx={{ borderRadius: "10px" }}
           >
             <Table stickyHeader size="small">
               <TableHead>
@@ -328,50 +472,86 @@ function VendorProfile() {
               </TableHead>
 
               <TableBody>
-                {paginated.map((doc, index) => {
-                  const fileName = getFileNameFromPath(doc.file_path);
-                  return (
-                    <TableRow
-                      key={`${doc.file_path}-${doc.created_at}-${index}`} // ✅ stable unique key
-                      sx={{
-                        backgroundColor:
-                          index % 2 === 0 ? "#EDE7F6" : "#FFFFFF",
-                      }}
-                    >
-                      <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                      <TableCell sx={{ minWidth: 160 }}>{fileName}</TableCell>
-                      <TableCell sx={{ textTransform: "capitalize" }}>
-                        {doc.type}
-                      </TableCell>
-                      <TableCell sx={{ textTransform: "capitalize" }}>
-                        {doc.status ?? "—"}
-                      </TableCell>
-                      <TableCell sx={{minWidth: "110px"}}>{formatDate(doc.created_at)}</TableCell>
-                      <TableCell sx={{display: "flex"}}>
-                        <Tooltip title="Preview">
-                          <IconButton
-                            color="primary"
-                            onClick={() => {
-                              const href = doc.url || doc.file_path;
-                              setPreviewSrc(href);
-                              setPreviewTitle(
-                                getFileNameFromPath(doc.file_path)
-                              );
-                              setPreviewOpen(true);
-                            }}
-                          >
-                            <CropFreeRounded />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton sx={{ color: "#DB1616" }}>
-                            <Delete />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                {/* Loading state */}
+                {loading && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <div className="flex items-center justify-center gap-2 py-6">
+                        <CircularProgress size={20} />
+                        <span className="text-sm">Loading documents…</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {/* Error state */}
+                {!loading && notFound && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <div className="py-6 text-red-600 text-sm">
+                        No Document Available
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {/* Empty state */}
+                {!loading && !notFound && !error && paginated.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <div className="py-6 text-sm">No documents found.</div>
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {/* Data rows */}
+                {!loading &&
+                  !error &&
+                  !notFound &&
+                  paginated.map((doc, index) => {
+                    const fileName = getFileNameFromPath(doc.file_path);
+                    return (
+                      <TableRow
+                        key={`${doc.file_path}-${doc.created_at}-${index}`} // ✅ stable unique key
+                        sx={{
+                          backgroundColor:
+                            index % 2 === 0 ? "#EDE7F6" : "#FFFFFF",
+                        }}
+                      >
+                        <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                        <TableCell sx={{ minWidth: 160 }}>{fileName}</TableCell>
+                        <TableCell sx={{ textTransform: "capitalize" }}>
+                          {doc.type || "—"}
+                        </TableCell>
+                        <TableCell sx={{ textTransform: "capitalize" }}>
+                          {doc.status ?? "—"}
+                        </TableCell>
+                        <TableCell sx={{ minWidth: "110px" }}>
+                          {formatDate(doc.created_at)}
+                        </TableCell>
+                        <TableCell sx={{ display: "flex" }}>
+                          <Tooltip title="Preview">
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                const href = doc.url || doc.file_path;
+                                setPreviewSrc(href);
+                                setPreviewTitle(fileName);
+                                setPreviewOpen(true);
+                              }}
+                            >
+                              <CropFreeRounded />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <IconButton sx={{ color: "#DB1616" }}>
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>

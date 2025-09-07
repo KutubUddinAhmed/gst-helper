@@ -30,8 +30,6 @@ function Vendor() {
   
   const base_url = import.meta.env.VITE_API_BASE_URL;
 
-
-
   type SortOrder = "Latest" | "Oldest";
   
   const [sortOrder, setSortOrder] = useState<SortOrder>("Latest");
