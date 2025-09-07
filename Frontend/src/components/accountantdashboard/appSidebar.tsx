@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Dashboard as DashboardIcon,
   Groups3Outlined,

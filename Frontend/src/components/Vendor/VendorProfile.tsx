@@ -20,7 +20,6 @@ import {
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { Delete, CropFreeRounded } from "@mui/icons-material";
-import vendorList from "./vendorList";
 import React, { useEffect, useMemo, useState } from "react";
 import ImagePreviewDialog from "./ImagePreviewDialog";
 

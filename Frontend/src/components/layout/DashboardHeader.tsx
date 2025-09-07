@@ -1,4 +1,3 @@
-import React from "react";
 import { Search } from "@mui/icons-material";
 import { AccountCircle } from "@mui/icons-material";
 

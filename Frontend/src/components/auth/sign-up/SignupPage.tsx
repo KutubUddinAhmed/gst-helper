@@ -1,5 +1,4 @@
-import { TextField, Button, MenuItem, Box, Divider } from "@mui/material";
-
+import { TextField, Button, Box, Divider } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
@@ -7,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Facebook, Google } from "@mui/icons-material";
 
 const base_url = import.meta.env.VITE_API_BASE_URL;
-const local_base_url = import.meta.env.VITE_API_LOCAL_URL;
 
 
 interface SignupFormData {

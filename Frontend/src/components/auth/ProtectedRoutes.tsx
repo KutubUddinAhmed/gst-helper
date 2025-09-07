@@ -15,7 +15,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  console.log("auth USer 1 : ", auth.userRole);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,7 +37,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }, [auth.accessToken, auth.userRole, allowedRoles, verifyToken]);
 
 
-  console.log("auth USer 2 : ", auth.userRole)
 
   // Show a loading indicator while waiting for the token verification
   if (isLoading) {
@@ -46,9 +44,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Redirect if unauthorized
-  // if (!isAuthorized) {
-  //   return <Navigate to={auth.accessToken ? "/unauthorized" : "/login"} />;
-  // }
+  if (!isAuthorized) {
+    return <Navigate to={auth.accessToken ? "/unauthorized" : "/login"} />;
+  }
 
   // Render the protected component if authorized
   return <>{children}</>;

@@ -1,4 +1,3 @@
-import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 import DashboardHeader from "./DashboardHeader";
 import { SidebarProvider } from "../../../components/components/ui/sidebar"

@@ -57,9 +57,6 @@ function Vendor() {
     fetchVendors();
   }, []);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -247,7 +244,7 @@ function Vendor() {
             count={filteredVendors.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
+            onPageChange={(event, newPage) => { void event; setPage(newPage); }}
             rowsPerPageOptions={[]}
             sx={{
               backgroundColor: "#15254D",
