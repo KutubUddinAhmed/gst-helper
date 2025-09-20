@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Paper,
@@ -12,60 +12,103 @@ import {
   Button,
   Box,
 } from "@mui/material";
+// import EditIcon from "@mui/icons-material/Edit";
 
-import EditIcon from "@mui/icons-material/Edit";
 
-const initialData = {
-  firstName: "John",
-  lastName: "Harlow",
-  role: "Accountant",
-  email: "email@email.com",
-  phone: "9876543210",
-  firm: "Firm Name",
-  stats: {
-    vendors: 100,
-    documents: 2000,
-  },
+
+type User = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
 };
 
-export default function AccountantProfile() {
-  const [user, setUser] = useState(initialData);
-  const [form, setForm] = useState(initialData);
+export default function UserProfile() {
+  const [user, setUser] = useState<User | null>(null);
+  const [form, setForm] = useState<User | null>(null);
   const [open, setOpen] = useState(false);
 
-  const handleEdit = () => setOpen(true);
+  const base_url = import.meta.env.VITE_API_BASE_URL;
+
+  // ✅ Fetch user profile data
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userString = localStorage.getItem("user");
+        const OwnerData = userString ? JSON.parse(userString) : null;
+        const UserId = OwnerData?.id;
+        const token = sessionStorage.getItem("access_token"); // <-- Get token from localStorage
+
+        if (!UserId || !token) {
+          console.error("User ID or token missing!");
+          return;
+        }
+        const res = await fetch(`${base_url}/user-profile/${UserId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // <-- Pass token in headers
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`API Error: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        setUser(data.user || data);
+        setForm(data.user || data);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // const handleEdit = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!form) return;
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSave = () => {
-    setUser(form);
+    if (form) {
+      setUser(form);
+    }
     setOpen(false);
   };
 
+  if (!user) {
+    return (
+      <Typography className="text-center text-gray-500 mt-10">
+        Loading profile...
+      </Typography>
+    );
+  }
+
   return (
     <>
-      <Paper className="w-full h-full rounded-2xl p-6 md:p-10 shadow-md border border-[#DADFEA] lg:space-y-6 ">
+      <Paper className="w-full h-full rounded-2xl p-6 md:p-10 shadow-md border border-[#DADFEA] space-y-6">
         {/* Profile Header */}
-        <Box className="relative flex flex-row gap-2 items-center lg:gap-6">
+        <Box className="relative flex flex-row gap-4 items-center">
           <Avatar
             sx={{
               bgcolor: "#121f54",
-              width: "110px",
-              height: "110px",
+              width: "100px",
+              height: "100px",
               fontSize: "2.5rem",
             }}
-            className={`border-[4px] border-white shadow-md z-10`}
           >
-            {user.firstName[0]}
-            {user.lastName[0]}
+            {user.first_name[0]}
+            {user.last_name[0]}
           </Avatar>
 
           <Paper
             variant="outlined"
-            className="flex-1 rounded-xl p-6 border border-[#DADFEA] w-full"
+            className="flex-1 rounded-xl p-6 border border-[#DADFEA]"
           >
             <Box className="flex justify-between items-start md:items-center gap-4">
               <Box>
@@ -73,7 +116,7 @@ export default function AccountantProfile() {
                   variant="h6"
                   className="text-[#121f54] font-bold uppercase"
                 >
-                  {user.firstName} {user.lastName}
+                  {user.first_name} {user.last_name}
                 </Typography>
                 <Typography className="text-[#7A8BB1] text-sm">
                   {user.role}
@@ -81,87 +124,40 @@ export default function AccountantProfile() {
                 <Typography className="text-[#7A8BB1] text-sm mt-1">
                   {user.email}
                 </Typography>
-                <Typography className="text-[#7A8BB1] text-sm">
-                  {user.phone}
-                </Typography>
-                <Typography className="text-[#0A0461] font-medium mt-2">
-                  {user.firm}
-                </Typography>
               </Box>
-              <IconButton onClick={handleEdit} sx={{ color: "#0A0461" }}>
+              {/* <IconButton onClick={handleEdit} sx={{ color: "#0A0461" }}>
                 <EditIcon />
-              </IconButton>
+              </IconButton> */}
             </Box>
-          </Paper>
-              </Box>  
-                 
-
-        {/* Stats Section */}
-
-        <Box className="mt-4 lg:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-10 justify-items-center">
-          <Paper
-            sx={{ background: "#DADFEA" }}
-            className="h-[160px] w-full md:h-[200px] lg:w-[400px] flex items-center justify-center flex-col shadow-md border"
-          >
-            <Typography variant="h6" className="text-[#0A0461]">
-              Total Vendors
-            </Typography>
-
-            <Typography variant="h6" className="font-bold text-[#121f54]">
-              {user.stats.vendors}
-            </Typography>
-          </Paper>
-          <Paper
-            sx={{ background: "#DADFEA" }}
-            className="h-[150px] w-full md:h-[200px] lg:w-[400px] flex items-center justify-center flex-col shadow-md border"
-          >
-            <Typography variant="h6" className="text-[#0A0461]">
-              Total Documents
-            </Typography>
-
-            <Typography variant="h6" className="font-bold text-[#121f54]">
-              {user.stats.documents}
-            </Typography>
-          </Paper>
-          <Paper
-            sx={{ background: "#DADFEA" }}
-            className="h-[150px] w-full md:h-[200px] lg:w-[400px] flex items-center justify-center flex-col shadow-md border"
-          >
-            <Typography variant="h6" className="text-[#0A0461]">
-              Verified Docs
-            </Typography>
-            <Typography variant="h6" className="font-bold text-[#121f54]">
-              {Math.floor(user.stats.documents * 0.8)}
-            </Typography>
           </Paper>
         </Box>
 
         {/* Edit Modal */}
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-          <DialogTitle className="text-[#121f54] font-bold">
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+          {/* <DialogTitle className="text-[#121f54] font-bold">
             Edit Profile
-          </DialogTitle>
-          <DialogContent dividers className="h-aut ">
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <TextField
-                  label="First Name"
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  fullWidth
-                  size="small"
-                />
-                <TextField
-                  label="Last Name"
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  fullWidth
-                  size="small"
-                />
-              </div>
-              <div className="flex flex-col gap-4">
+          </DialogTitle> */}
+          <DialogContent dividers>
+            {form && (
+              <form className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <TextField
+                    label="First Name"
+                    name="first_name"
+                    value={form.first_name}
+                    onChange={handleChange}
+                    fullWidth
+                    size="small"
+                  />
+                  <TextField
+                    label="Last Name"
+                    name="last_name"
+                    value={form.last_name}
+                    onChange={handleChange}
+                    fullWidth
+                    size="small"
+                  />
+                </div>
                 <TextField
                   label="Email"
                   name="email"
@@ -171,23 +167,15 @@ export default function AccountantProfile() {
                   size="small"
                 />
                 <TextField
-                  label="Phone"
-                  name="phone"
-                  value={form.phone}
+                  label="Role"
+                  name="role"
+                  value={form.role}
                   onChange={handleChange}
                   fullWidth
                   size="small"
                 />
-                <TextField
-                  label="Business Name"
-                  name="firm"
-                  value={form.firm}
-                  onChange={handleChange}
-                  fullWidth
-                  size="small"
-                />
-              </div>
-            </form>
+              </form>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: "#7A8BB1" }}>
