@@ -2,7 +2,7 @@ import { Search } from "@mui/icons-material";
 import { AccountCircle } from "@mui/icons-material";
 
 import Breadcrumbs from "./Breadcrumbs";
-import { SidebarTrigger } from "../../../components/components/ui/sidebar";
+import { SidebarTrigger } from "../ui/sidebar";
 
 function DashboardHeader() {
   return (

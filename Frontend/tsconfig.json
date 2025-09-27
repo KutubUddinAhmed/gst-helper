@@ -8,15 +8,17 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/lib/*": ["src/lib/*"]
     },
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  // "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+   "include": ["src", "next-env.d.ts"], 
   "exclude": ["node_modules"],
   "files": [],
   "references": [
