@@ -13,7 +13,7 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuItem,
-} from "../../../components/components/ui/sidebar";
+} from "../ui/sidebar";
 
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
