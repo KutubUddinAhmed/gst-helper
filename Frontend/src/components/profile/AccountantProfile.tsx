@@ -10,15 +10,13 @@ import {
   Button,
   Box,
 } from "@mui/material";
-// import EditIcon from "@mui/icons-material/Edit";
-
-
 
 type User = {
   first_name: string;
   last_name: string;
   email: string;
   role: string;
+  id?: string | number;
 };
 
 export default function UserProfile() {
@@ -28,23 +26,23 @@ export default function UserProfile() {
 
   const base_url = import.meta.env.VITE_API_BASE_URL;
 
-  // ✅ Fetch user profile data
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userString = localStorage.getItem("user");
         const OwnerData = userString ? JSON.parse(userString) : null;
         const UserId = OwnerData?.id;
-        const token = sessionStorage.getItem("access_token"); // <-- Get token from localStorage
+        const token = sessionStorage.getItem("access_token");
 
         if (!UserId || !token) {
           console.error("User ID or token missing!");
           return;
         }
+
         const res = await fetch(`${base_url}/user-profile/${UserId}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // <-- Pass token in headers
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -53,18 +51,18 @@ export default function UserProfile() {
         }
 
         const data = await res.json();
+        const normalized = data.user || data;
 
-        setUser(data.user || data);
-        setForm(data.user || data);
+        setUser(normalized);
+        setForm(normalized);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [base_url]);
 
-  // const handleEdit = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,9 +71,7 @@ export default function UserProfile() {
   };
 
   const handleSave = () => {
-    if (form) {
-      setUser(form);
-    }
+    if (form) setUser(form);
     setOpen(false);
   };
 
@@ -86,6 +82,9 @@ export default function UserProfile() {
       </Typography>
     );
   }
+
+  const firstInitial = user.first_name?.[0] ?? "";
+  const lastInitial = user.last_name?.[0] ?? "";
 
   return (
     <>
@@ -100,8 +99,8 @@ export default function UserProfile() {
               fontSize: "2.5rem",
             }}
           >
-            {user.first_name[0]}
-            {user.last_name[0]}
+            {firstInitial}
+            {lastInitial}
           </Avatar>
 
           <Paper
@@ -123,18 +122,13 @@ export default function UserProfile() {
                   {user.email}
                 </Typography>
               </Box>
-              {/* <IconButton onClick={handleEdit} sx={{ color: "#0A0461" }}>
-                <EditIcon />
-              </IconButton> */}
+              {/* Edit button could go here */}
             </Box>
           </Paper>
         </Box>
 
         {/* Edit Modal */}
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          {/* <DialogTitle className="text-[#121f54] font-bold">
-            Edit Profile
-          </DialogTitle> */}
           <DialogContent dividers>
             {form && (
               <form className="space-y-4">
